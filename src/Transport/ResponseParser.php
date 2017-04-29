@@ -27,29 +27,29 @@ class ResponseParser
      */
     private $body;
 
-
-    private $attributes; // object you can read: attributes after validateJob()
-
+    /*************************************************
+     * Internal usage vars only                      *
+     *************************************************/
     private $index;
 
     private $collection; // RFC3382
 
-    private $collection_key = []; // RFC3382
+    private $collectionKey = []; // RFC3382
 
-    private $collection_depth = -1; // RFC3382
+    private $collectionDepth = -1; // RFC3382
 
-    private $end_collection = false; // RFC3382
+    private $endCollection = false; // RFC3382
 
-    private $collection_nbr = []; // RFC3382
+    private $collectionNbr = []; // RFC3382
 
-    private $parsed = [];
+    private $attributeName;
 
-    private $attribute_name;
-
-    private $last_attribute_name;
+    private $lastAttributeName;
 
     /**
-     * Response constructor.
+     * ResponseParser constructor.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response
      */
     public function __construct(ResponseInterface $response)
     {
@@ -290,7 +290,7 @@ class ResponseParser
      */
     private function parseRequestID()
     {
-        $requestId = self::interpretInteger(substr($this->content, $this->offset, 4));
+        $requestId = $this->interpretInteger(substr($this->content, $this->offset, 4));
         $this->offset += 4;
 
         return $requestId;
@@ -371,38 +371,38 @@ class ResponseParser
 
         switch ($tag) {
             case 'begCollection': //RFC3382 (BLIND CODE)
-                if ($this->end_collection) {
+                if ($this->endCollection) {
                     $this->index--;
                 }
-                $this->end_collection = false;
+                $this->endCollection = false;
                 $this->body[$attributes_type][$j]['type'] = 'collection';
                 $this->readAttributeName($attributes_type, $j);
                 if (!$this->body[$attributes_type][$j]['name']) { // it is a multi-valued collection
-                    $this->collection_depth++;
+                    $this->collectionDepth++;
                     $this->index--;
-                    $this->collection_nbr[$this->collection_depth]++;
+                    $this->collectionNbr[$this->collectionDepth]++;
                 } else {
-                    $this->collection_depth++;
-                    if ($this->collection_depth == 0) {
+                    $this->collectionDepth++;
+                    if ($this->collectionDepth == 0) {
                         $this->collection = (object)'collection';
                     }
-                    if (array_key_exists($this->collection_depth, $this->collection_nbr)) {
-                        $this->collection_nbr[$this->collection_depth]++;
+                    if (array_key_exists($this->collectionDepth, $this->collectionNbr)) {
+                        $this->collectionNbr[$this->collectionDepth]++;
                     } else {
-                        $this->collection_nbr[$this->collection_depth] = 0;
+                        $this->collectionNbr[$this->collectionDepth] = 0;
                     }
-                    unset($this->end_collection);
+                    unset($this->endCollection);
 
                 }
-                $this->readValue('begCollection', $attributes_type, $j);
+                $this->readValue($attributes_type, $j);
                 break;
             case 'endCollection': //RFC3382 (BLIND CODE)
                 $this->body[$attributes_type][$j]['type'] = 'collection';
                 $this->readAttributeName($attributes_type, $j, 0);
-                $this->readValue('name', $attributes_type, $j, 0);
-                $this->collection_depth--;
-                $this->collection_key[$this->collection_depth] = 0;
-                $this->end_collection = true;
+                $this->readValue($attributes_type, $j, 0);
+                $this->collectionDepth--;
+                $this->collectionKey[$this->collectionDepth] = 0;
+                $this->endCollection = true;
                 break;
             case 'memberAttrName': // RFC3382 (BLIND CODE)
                 $this->body[$attributes_type][$j]['type'] = 'memberAttrName';
@@ -411,20 +411,20 @@ class ResponseParser
                 break;
 
             default:
-                $this->collection_depth = -1;
-                $this->collection_key = [];
-                $this->collection_nbr = [];
+                $this->collectionDepth = -1;
+                $this->collectionKey = [];
+                $this->collectionNbr = [];
                 $this->body[$attributes_type][$j]['type'] = $tag;
-                $attribute_name = $this->readAttributeName($attributes_type, $j);
-                if (!$attribute_name) {
-                    $attribute_name = $this->attribute_name;
+                $attributeName = $this->readAttributeName($attributes_type, $j);
+                if (!$attributeName) {
+                    $attributeName = $this->attributeName;
                 } else {
-                    $this->attribute_name = $attribute_name;
+                    $this->attributeName = $attributeName;
                 }
-                $value = $this->readValue($tag, $attributes_type, $j);
+                $this->readValue($attributes_type, $j);
                 $this->body[$attributes_type][$j]['value'] =
                   $this->interpretAttribute(
-                    $attribute_name,
+                    $attributeName,
                     $tag,
                     $this->body[$attributes_type][$j]['value']
                   );
@@ -554,10 +554,9 @@ class ResponseParser
     private function readCollection($attributes_type, $j)
     {
         $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
-
         $this->offset += 2;
-
         $name = '';
+
         for ($i = 0; $i < $name_length; $i++) {
             $name .= $this->content[$this->offset];
             $this->offset += 1;
@@ -567,12 +566,10 @@ class ResponseParser
         }
 
         $collection_name = $name;
-
-        $name_length = ord($this->content[$this->offset]) * 256
-          + ord($this->content[$this->offset + 1]);
+        $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
-
         $name = '';
+
         for ($i = 0; $i < $name_length; $i++) {
             $name .= $this->content[$this->offset];
             $this->offset += 1;
@@ -581,27 +578,23 @@ class ResponseParser
             }
         }
 
-        $attribute_name = $name;
-        if ($attribute_name == '') {
-            $attribute_name = $this->last_attribute_name;
-            $this->collection_key[$this->collection_depth]++;
+        $attributeName = $name;
+        if ($attributeName == '') {
+            $attributeName = $this->lastAttributeName;
+            $this->collectionKey[$this->collectionDepth]++;
         } else {
-            $this->collection_key[$this->collection_depth] = 0;
+            $this->collectionKey[$this->collectionDepth] = 0;
         }
-        $this->last_attribute_name = $attribute_name;
+        $this->lastAttributeName = $attributeName;
 
 
         $tag = $this->readTag(ord($this->content[$this->offset]));
         $this->offset++;
-
         $type = $tag;
-
-        $name_length = ord($this->content[$this->offset]) * 256
-          + ord($this->content[$this->offset + 1]);
+        $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
-
-
         $name = '';
+
         for ($i = 0; $i < $name_length; $i++) {
             $name .= $this->content[$this->offset];
             $this->offset += 1;
@@ -612,12 +605,10 @@ class ResponseParser
         }
 
         $collection_value = $name;
-        $value_length = ord($this->content[$this->offset]) * 256
-          + ord($this->content[$this->offset + 1]);
-
+        $value_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
-
         $value = '';
+
         for ($i = 0; $i < $value_length; $i++) {
             if ($this->offset >= strlen($this->content)) {
                 return;
@@ -628,26 +619,25 @@ class ResponseParser
         }
 
         $object = &$this->collection;
-        for ($i = 0; $i <= $this->collection_depth; $i++) {
-            $indice = '_indice'.$this->collection_nbr[$i];
+        for ($i = 0; $i <= $this->collectionDepth; $i++) {
+            $indice = '_indice'.$this->collectionNbr[$i];
             if (!isset($object->$indice)) {
                 $object->$indice = (object)'indice';
             }
             $object = &$object->$indice;
         }
 
-        $value_key = '_value'.$this->collection_key[$this->collection_depth];
-        $col_name_key = '_collection_name'.$this->collection_key[$this->collection_depth];
-        $col_val_key = '_collection_value'.$this->collection_key[$this->collection_depth];
+        $value_key = '_value'.$this->collectionKey[$this->collectionDepth];
+        $col_name_key = '_collection_name'.$this->collectionKey[$this->collectionDepth];
+        $col_val_key = '_collection_value'.$this->collectionKey[$this->collectionDepth];
 
-        $attribute_value = $this->interpretAttribute($attribute_name, $tag, $value);
-        $attribute_name = str_replace('-', '_', $attribute_name);
+        $attribute_value = $this->interpretAttribute($attributeName, $tag, $value);
+        $attributeName = str_replace('-', '_', $attributeName);
 
-
-        $object->$attribute_name->_type = $type;
-        $object->$attribute_name->$value_key = $attribute_value;
-        $object->$attribute_name->$col_name_key = $collection_name;
-        $object->$attribute_name->$col_val_key = $collection_value;
+        $object->$attributeName->_type = $type;
+        $object->$attributeName->$value_key = $attribute_value;
+        $object->$attributeName->$col_name_key = $collection_name;
+        $object->$attributeName->$col_val_key = $collection_value;
 
         $this->body[$attributes_type][$j]['value'] = $this->collection;
     }
@@ -656,8 +646,8 @@ class ResponseParser
     {
         $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
-
         $name = '';
+
         for ($i = 0; $i < $name_length; $i++) {
             if ($this->offset >= strlen($this->content)) {
                 return false;
@@ -673,18 +663,16 @@ class ResponseParser
         return $name;
     }
 
-    private function readValue($type, $attributes_type, $j, $write = 1)
+    private function readValue($attributes_type, $j, $write = 1)
     {
         $value_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
-
         $this->offset += 2;
-
         $value = '';
+
         for ($i = 0; $i < $value_length; $i++) {
             if ($this->offset >= strlen($this->content)) {
                 return false;
             }
-
             $value .= $this->content[$this->offset];
             $this->offset += 1;
         }
@@ -696,51 +684,7 @@ class ResponseParser
         return $value;
     }
 
-    private function parseAttributes()
-    {
-        $k = -1;
-        $l = 0;
-
-        for ($i = 0; $i < count($this->body); $i++) {
-            for ($j = 0; $j < (count($this->body[$i]) - 1); $j++) {
-                if (!empty($this->body[$i][$j]['name'])) {
-                    $k++;
-                    $l = 0;
-                    $this->parsed[$k]['range'] = $this->body[$i]['attributes'];
-                    $this->parsed[$k]['name'] = $this->body[$i][$j]['name'];
-                    $this->parsed[$k]['type'] = $this->body[$i][$j]['type'];
-                    $this->parsed[$k][$l] = $this->body[$i][$j]['value'];
-                } else {
-                    $l++;
-                    $this->parsed[$k][$l] = $this->body[$i][$j]['value'];
-                }
-            }
-        }
-
-        $this->body = [];
-        $this->attributes = new \stdClass();
-
-        for ($i = 0; $i < count($this->parsed); $i++) {
-            $name = $this->parsed[$i]['name'];
-            $php_name = str_replace('-', '_', $name);
-            $type = $this->parsed[$i]['type'];
-            $range = $this->parsed[$i]['range'];
-            $this->attributes->$php_name = new \stdClass();
-            $this->attributes->$php_name->_type = $type;
-            $this->attributes->$php_name->_range = $range;
-
-            for ($j = 0; $j < (count($this->parsed[$i]) - 3); $j++) {
-                $value = $this->parsed[$i][$j];
-                $this->index = '_value'.$j;
-                $this->attributes->$php_name->$this->index = $value;
-            }
-        }
-
-        $this->parsed = [];
-
-    }
-
-    private function interpretAttribute($attribute_name, $type, $value)
+    private function interpretAttribute($attributeName, $type, $value)
     {
         switch ($type) {
             case 'integer':
@@ -761,7 +705,7 @@ class ResponseParser
                 $value = $this->interpretDateTime($value);
                 break;
             case 'enum':
-                $value = $this->interpretEnum($attribute_name, $value); // must be overwritten by children
+                $value = $this->interpretEnum($attributeName, $value); // must be overwritten by children
                 break;
             case 'resolution':
                 $unit = $value[8];
@@ -801,10 +745,8 @@ class ResponseParser
     private function interpretRangeOfInteger($value)
     {
         $halfsize = strlen($value) / 2;
-
         $integer1 = $this->interpretInteger(substr($value, 0, $halfsize));
         $integer2 = $this->interpretInteger(substr($value, $halfsize, $halfsize));
-
         $value_parsed = sprintf('%s-%s', $integer1, $integer2);
 
         return $value_parsed;
@@ -838,11 +780,11 @@ class ResponseParser
         return $date;
     }
 
-    private function interpretEnum($attribute_name, $value)
+    private function interpretEnum($attributeName, $value)
     {
         $value_parsed = $this->interpretInteger($value);
 
-        switch ($attribute_name) {
+        switch ($attributeName) {
             case 'job-state':
                 switch ($value_parsed) {
                     case 0x03:

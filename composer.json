@@ -16,6 +16,9 @@
         "php-http/message": "^1.0",
         "guzzlehttp/psr7": "^1.2"
     },
+    "require-dev": {
+        "symfony/debug": "^3.2"
+    },
     "autoload": {
         "psr-4": {
             "Smalot\\Cups\\": "src/"
