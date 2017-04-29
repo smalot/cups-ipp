@@ -1,0 +1,24 @@
+{
+    "name": "smalot/cups-ipp",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sebastien Malot",
+            "email": "sebastien@malot.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php-http/socket-client": "^1.0",
+        "php-http/client-common": "^1.1",
+        "php-http/message": "^1.0",
+        "guzzlehttp/psr7": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Smalot\\Cups\\": "src/"
+        }
+    }
+}
