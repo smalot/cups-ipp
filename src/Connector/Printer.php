@@ -88,6 +88,19 @@ class Printer extends ConnectorAbstract
     }
 
     /**
+     * @param string $uri
+     *
+     * @return \Smalot\Cups\Transport\Response
+     */
+    public function purge($uri)
+    {
+        $request = $this->preparePurgeRequest($uri);
+        $response = $this->client->sendRequest($request);
+
+        return CupsResponse::parseResponse($response);
+    }
+
+    /**
      * @param array $attributes
      *
      * @return \GuzzleHttp\Psr7\Request
@@ -218,6 +231,42 @@ class Printer extends ConnectorAbstract
           . $language
           . $printerUri
           . $username
+          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+
+        $headers = ['Content-Type' => 'application/ipp'];
+
+        return new Request('POST', '/admin/', $headers, $content);
+    }
+
+    /**
+     * @param string $uri
+     *
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function preparePurgeRequest($uri)
+    {
+        $charset = $this->buildCharset();
+        $language = $this->buildLanguage();
+        $operationId = $this->buildOperationId();
+        $username = $this->buildUsername();
+        $printerUri = $this->buildPrinterURI($uri);
+
+        // Needs a build function call.
+        $message = '';
+
+        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
+          . chr(0x00) . chr (0x12) // purge-Jobs | operation-id
+          . $operationId //           request-id
+          . chr(0x01) // start operation-attributes | operation-attributes-tag
+          . $charset
+          . $language
+          . $printerUri
+          . $username
+          . chr(0x22)
+          . $this->getStringLength('purge-jobs')
+          . 'purge-jobs'
+          . $this->getStringLength(chr(0x01))
+          . chr(0x01)
           . chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
