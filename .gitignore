@@ -2,3 +2,4 @@
 /.idea/
 /tmp
 /test*
+composer.lock
