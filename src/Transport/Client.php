@@ -9,8 +9,8 @@ use Http\Client\Common\Plugin\DecoderPlugin;
 use Http\Client\Common\Plugin\ErrorPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Client\HttpClient;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Socket\Client as SocketHttpClient;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Psr\Http\Message\RequestInterface;
 
 /**

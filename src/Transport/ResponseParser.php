@@ -23,13 +23,29 @@ class ResponseParser
     private $offset;
 
     /**
+     * @var string
+     */
+    private $ippVersion;
+
+    /**
+     * @var string
+     */
+    protected $statusCode;
+
+    /**
+     * @var int
+     */
+    protected $requestId;
+
+    /**
      * @var array
      */
-    private $body;
+    protected $body;
 
     /*************************************************
      * Internal usage vars only                      *
      *************************************************/
+
     private $index;
 
     private $collection; // RFC3382
@@ -777,7 +793,9 @@ class ResponseParser
           $minutes_from_utc
         );
 
-        return $date;
+        $datetime = new \DateTime($date);
+
+        return $datetime->format('c');
     }
 
     private function interpretEnum($attributeName, $value)

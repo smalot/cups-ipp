@@ -9,6 +9,10 @@ namespace Smalot\Cups\Connector;
  */
 trait LanguageAware
 {
+
+    /**
+     * @var string
+     */
     protected $language;
 
     /**
@@ -29,5 +33,20 @@ trait LanguageAware
         $this->language = $language;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function buildLanguage()
+    {
+        $language = strtolower($this->getLanguage());
+        $metaLanguage = chr(0x48) // natural-language type | value-tag
+          .chr(0x00).chr(0x1B) //  name-length
+          .'attributes-natural-language' //attributes-natural-language
+          .$this->getStringLength($language) // value-length
+          .$language; // value
+
+        return $metaLanguage;
     }
 }

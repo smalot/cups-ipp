@@ -220,8 +220,6 @@ class http_class
   }
   $this->connection = @fsockopen ($transport_type.$url, $port, $errno, $errstr, $this->timeout);
 
-   die('test');
-
   $error =
    sprintf (_('Unable to connect to "%s%s port %s": %s'), $transport_type,
      $url, $port, $errstr);

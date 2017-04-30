@@ -974,6 +974,7 @@ class BasicIPP
     self::_putDebug("********* END RESPONSE BODY ********");
    }
   }
+  echo $this->serveroutput->body;
   $http->Close();
   return true;
  }
