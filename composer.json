@@ -1,5 +1,6 @@
 {
     "name": "smalot/cups-ipp",
+    "description": "CUPS Implementation of IPP - PHP Client API",
     "type": "library",
     "license": "MIT",
     "authors": [
