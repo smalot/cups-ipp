@@ -74,26 +74,26 @@ class Job extends ConnectorAbstract
     }
 
     /**
-     * @param string $printerUri
+     * @param string $uri
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function pause($printerUri)
+    public function cancel($uri)
     {
-        $request = $this->preparePauseRequest($printerUri);
+        $request = $this->prepareCancelRequest($uri);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
     }
 
     /**
-     * @param string $printerUri
+     * @param string $uri
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function resume($printerUri)
+    public function release($uri)
     {
-        $request = $this->prepareResumeRequest($printerUri);
+        $request = $this->prepareReleaseRequest($uri);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
@@ -281,27 +281,33 @@ class Job extends ConnectorAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function preparePauseRequest($uri)
+    protected function prepareCancelRequest($uri)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerUri = $this->buildPrinterURI($uri);
+        $jobUri = $this->buildJobURI($uri);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
-          .chr(0x00).chr(0x10) // Pause-Printer | operation-id
-          .$operationId //           request-id
-          .chr(0x01) // start operation-attributes | operation-attributes-tag
-          .$charset
-          .$language
-          .$printerUri
-          .$username
-          .chr(0x03); // end-of-attributes | end-of-attributes-tag
+        // Needs a build function call.
+        $requestBodyMalformed = '';
+        $message = '';
+
+        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
+          . chr(0x00) . chr (0x08) // cancel-Job | operation-id
+          . $operationId //           request-id
+          . $requestBodyMalformed
+          . chr(0x01) // start operation-attributes | operation-attributes-tag
+          . $charset
+          . $language
+          . $jobUri
+          . $username
+          . $message
+          . chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
-        return new Request('POST', '/admin/', $headers, $content);
+        return new Request('POST', '/jobs/', $headers, $content);
     }
 
     /**
@@ -309,26 +315,30 @@ class Job extends ConnectorAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareResumeRequest($uri)
+    protected function prepareReleaseRequest($uri)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerUri = $this->buildPrinterURI($uri);
+        $jobUri = $this->buildJobURI($uri);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
-          .chr(0x00).chr(0x11) // Resume-Printer | operation-id
-          .$operationId //           request-id
-          .chr(0x01) // start operation-attributes | operation-attributes-tag
-          .$charset
-          .$language
-          .$printerUri
-          .$username
-          .chr(0x03); // end-of-attributes | end-of-attributes-tag
+        // Needs a build function call.
+        $message = '';
+
+        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
+          . chr(0x00) . chr (0x0d) // release-Job | operation-id
+          . $operationId //           request-id
+          . chr(0x01) // start operation-attributes | operation-attributes-tag
+          . $charset
+          . $language
+          . $jobUri
+          . $username
+          . $message
+          . chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
-        return new Request('POST', '/admin/', $headers, $content);
+        return new Request('POST', '/jobs/', $headers, $content);
     }
 }
