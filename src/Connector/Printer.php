@@ -49,39 +49,39 @@ class Printer extends ConnectorAbstract
     }
 
     /**
-     * @param string $printerUri
+     * @param string $uri
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function getAttributes($printerUri)
+    public function getAttributes($uri)
     {
-        $request = $this->prepareGetAttributesRequest($printerUri);
+        $request = $this->prepareGetAttributesRequest($uri);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
     }
 
     /**
-     * @param string $printerUri
+     * @param string $uri
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function pause($printerUri)
+    public function pause($uri)
     {
-        $request = $this->preparePauseRequest($printerUri);
+        $request = $this->preparePauseRequest($uri);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
     }
 
     /**
-     * @param string $printerUri
+     * @param string $uri
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function resume($printerUri)
+    public function resume($uri)
     {
-        $request = $this->prepareResumeRequest($printerUri);
+        $request = $this->prepareResumeRequest($uri);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);

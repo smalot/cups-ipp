@@ -51,8 +51,7 @@ class Job extends ConnectorAbstract
       $limit = 0,
       $whichJobs = 'not-completed',
       $subset = false
-    )
-    {
+    ) {
         $request = $this->prepareGetListRequest($uri, $myJobs, $limit, $whichJobs, $subset);
         $response = $this->client->sendRequest($request);
 
@@ -60,13 +59,15 @@ class Job extends ConnectorAbstract
     }
 
     /**
-     * @param string $printerUri
+     * @param $jobUri
+     * @param bool $subset
+     * @param string $attributesGroup
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function getAttributes($printerUri)
+    public function getAttributes($jobUri, $subset = false, $attributesGroup = 'all')
     {
-        $request = $this->prepareGetAttributesRequest($printerUri);
+        $request = $this->prepareGetAttributesRequest($jobUri, $subset, $attributesGroup);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
@@ -193,6 +194,7 @@ class Job extends ConnectorAbstract
               .$this->getStringLength('all')
               .'all';
         }
+
         $content .= chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
@@ -202,32 +204,76 @@ class Job extends ConnectorAbstract
 
     /**
      * @param string $uri
+     * @param bool $subset
+     * @param string $attributesGroup
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareGetAttributesRequest($uri)
+    protected function prepareGetAttributesRequest($uri, $subset = false, $attributesGroup = 'all')
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerAttributes = $this->buildPrinterAttributes();
-        $printerUri = $this->buildPrinterURI($uri);
+        $jobUri = $this->buildJobURI($uri);
 
         $content = chr(0x01).chr(0x01) // 1.1  | version-number
-          .chr(0x00).chr(0x0b) // Print-URI | operation-id
+          .chr(0x00).chr(0x09) // Get-Job-Attributes | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$printerUri
-          .$username
-          .$printerAttributes
-          .chr(0x03); // end-of-attributes | end-of-attributes-tag
+          .$jobUri
+          .$username;
+
+        if ($subset) {
+            $content .=
+              chr(0x44) // keyword
+              .$this->getStringLength('requested-attributes')
+              .'requested-attributes'
+              .$this->getStringLength('job-uri')
+              .'job-uri'
+              .chr(0x44) // keyword
+              .$this->getStringLength('')
+              .''
+              .$this->getStringLength('job-name')
+              .'job-name'
+              .chr(0x44) // keyword
+              .$this->getStringLength('')
+              .''
+              .$this->getStringLength('job-state')
+              .'job-state'
+              .chr(0x44) // keyword
+              .$this->getStringLength('')
+              .''
+              .$this->getStringLength('job-state-reason')
+              .'job-state-reason';
+        } elseif ($attributesGroup) {
+            switch ($attributesGroup) {
+                case 'job-template':
+                    break;
+                case 'job-description':
+                    break;
+                case 'all':
+                    break;
+                default:
+                    trigger_error(_('not a valid attribute group: ').$attributesGroup, E_USER_NOTICE);
+                    $attributesGroup = '';
+                    break;
+            }
+
+            $content .=
+              chr(0x44) // keyword
+              .$this->getStringLength('requested-attributes')
+              .'requested-attributes'
+              .$this->getStringLength($attributesGroup)
+              .$attributesGroup;
+        }
+        $content .= chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
-        return new Request('POST', '/', $headers, $content);
+        return new Request('POST', '/jobs/', $headers, $content);
     }
 
     /**

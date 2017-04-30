@@ -411,4 +411,20 @@ class ConnectorAbstract
 
         return $metaPrinterUrl;
     }
+
+    /**
+     * @param string $uri
+     *
+     * @return string
+     */
+    protected function buildJobURI($uri)
+    {
+        $metaJobUrl = chr(0x45) // URI
+        . $this->getStringLength('job-uri')
+        . 'job-uri'
+        . $this->getStringLength($uri)
+        . $uri;
+
+        return $metaJobUrl;
+    }
 }
