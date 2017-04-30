@@ -293,17 +293,17 @@ class Job extends ConnectorAbstract
         $requestBodyMalformed = '';
         $message = '';
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x08) // cancel-Job | operation-id
-          . $operationId //           request-id
-          . $requestBodyMalformed
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $jobUri
-          . $username
-          . $message
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x08) // cancel-Job | operation-id
+          .$operationId //           request-id
+          .$requestBodyMalformed
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$jobUri
+          .$username
+          .$message
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
@@ -326,16 +326,16 @@ class Job extends ConnectorAbstract
         // Needs a build function call.
         $message = '';
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x0d) // release-Job | operation-id
-          . $operationId //           request-id
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $jobUri
-          . $username
-          . $message
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x0d) // release-Job | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$jobUri
+          .$username
+          .$message
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
