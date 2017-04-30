@@ -7,12 +7,13 @@ use Smalot\Cups\Transport\Response as CupsResponse;
 use GuzzleHttp\Psr7\Request;
 
 /**
- * Class Printer
+ * Class Job
  *
  * @package Smalot\Cups\Connector
  */
-class Printer extends ConnectorAbstract
+class Job extends ConnectorAbstract
 {
+
     /**
      * @var \Http\Client\HttpClient
      */
@@ -36,13 +37,23 @@ class Printer extends ConnectorAbstract
     }
 
     /**
-     * @param array $attributes
+     * @param $uri
+     * @param bool $myJobs
+     * @param int $limit
+     * @param string $whichJobs
+     * @param bool $subset
      *
      * @return \Smalot\Cups\Transport\Response
      */
-    public function getList($attributes = [])
+    public function getList(
+      $uri,
+      $myJobs = true,
+      $limit = 0,
+      $whichJobs = 'not-completed',
+      $subset = false
+    )
     {
-        $request = $this->prepareGetListRequest($attributes);
+        $request = $this->prepareGetListRequest($uri, $myJobs, $limit, $whichJobs, $subset);
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
@@ -88,55 +99,105 @@ class Printer extends ConnectorAbstract
     }
 
     /**
-     * @param array $attributes
+     * @param string $uri
+     * @param bool $myJobs
+     * @param int $limit
+     * @param string $whichJobs
+     * @param bool $subset
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareGetListRequest($attributes = [])
-    {
+    protected function prepareGetListRequest(
+      $uri,
+      $myJobs = true,
+      $limit = 0,
+      $whichJobs = 'not-completed',
+      $subset = false
+    ) {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
+        $username = $this->buildUsername();
+        $printerUri = $this->buildPrinterURI($uri);
 
-        // Attributes.
-        if (empty($attributes)) {
-            $attributes = [
-              'printer-uri-supported',
-              'printer-location',
-              'printer-info',
-              'printer-type',
-              'color-supported',
-            ];
+        if ($limit) {
+            $limit = $this->buildInteger($limit);
+            $metaLimit = chr(0x21) // integer
+              .$this->getStringLength('limit')
+              .'limit'
+              .$this->getStringLength($limit)
+              .$limit;
+        } else {
+            $metaLimit = '';
         }
 
-        $meta_attributes = '';
-        for ($i = 0; $i < count($attributes); $i++) {
-            if ($i == 0) {
-                $meta_attributes .= chr(0x44) // Keyword
-                  .$this->getStringLength('requested-attributes')
-                  .'requested-attributes'
-                  .$this->getStringLength($attributes[0])
-                  .$attributes[0];
-            } else {
-                $meta_attributes .= chr(0x44) // Keyword
-                  .chr(0x0).chr(0x0) // zero-length name
-                  .$this->getStringLength($attributes[$i])
-                  .$attributes[$i];
-            }
+        if ($whichJobs == 'completed') {
+            $metaWhichJobs = chr(0x44) // keyword
+              .$this->getStringLength('which-jobs')
+              .'which-jobs'
+              .$this->getStringLength($whichJobs)
+              .$whichJobs;
+        } else {
+            $metaWhichJobs = '';
         }
 
-        $content = chr(0x01).chr(0x01) // IPP version 1.1
-          .chr(0x40).chr(0x02) // operation:  cups vendor extension: get printers
+        if ($myJobs) {
+            $metaMyJobs = chr(0x22) // boolean
+              .$this->getStringLength('my-jobs')
+              .'my-jobs'
+              .$this->getStringLength(chr(0x01))
+              .chr(0x01);
+        } else {
+            $metaMyJobs = '';
+        }
+
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x0A) // Get-Jobs | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$meta_attributes
-          .chr(0x03);
+          .$printerUri
+          .$username
+          .$metaLimit
+          .$metaWhichJobs
+          .$metaMyJobs;
+
+        if ($subset) {
+            $content .=
+              chr(0x44) // keyword
+              .$this->getStringLength('requested-attributes')
+              .'requested-attributes'
+              .$this->getStringLength('job-uri')
+              .'job-uri'
+              .chr(0x44) // keyword
+              .$this->getStringLength('')
+              .''
+              .$this->getStringLength('job-name')
+              .'job-name'
+              .chr(0x44) // keyword
+              .$this->getStringLength('')
+              .''
+              .$this->getStringLength('job-state')
+              .'job-state'
+              .chr(0x44) // keyword
+              .$this->getStringLength('')
+              .''
+              .$this->getStringLength('job-state-reason')
+              .'job-state-reason';
+        } else { # cups 1.4.4 doesn't return much of anything without this
+            $content .=
+              chr(0x44) // keyword
+              .$this->getStringLength('requested-attributes')
+              .'requested-attributes'
+              .$this->getStringLength('all')
+              .'all';
+        }
+        $content .= chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
-        return new Request('POST', '/', $headers, $content);
+        return new Request('POST', '/jobs/', $headers, $content);
     }
 
     /**
@@ -182,15 +243,15 @@ class Printer extends ConnectorAbstract
         $username = $this->buildUsername();
         $printerUri = $this->buildPrinterURI($uri);
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x10) // Pause-Printer | operation-id
-          . $operationId //           request-id
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $printerUri
-          . $username
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x10) // Pause-Printer | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$printerUri
+          .$username
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
@@ -210,15 +271,15 @@ class Printer extends ConnectorAbstract
         $username = $this->buildUsername();
         $printerUri = $this->buildPrinterURI($uri);
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x11) // Resume-Printer | operation-id
-          . $operationId //           request-id
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $printerUri
-          . $username
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x11) // Resume-Printer | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$printerUri
+          .$username
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 

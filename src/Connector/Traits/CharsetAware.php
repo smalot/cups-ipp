@@ -1,11 +1,11 @@
 <?php
 
-namespace Smalot\Cups\Connector;
+namespace Smalot\Cups\Connector\Traits;
 
 /**
  * Trait CharsetAware
  *
- * @package Smalot\Cups\Connector
+ * @package Smalot\Cups\Connector\Traits
  */
 trait CharsetAware
 {

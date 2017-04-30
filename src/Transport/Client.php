@@ -12,6 +12,7 @@ use Http\Client\HttpClient;
 use Http\Client\Socket\Client as SocketHttpClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Psr\Http\Message\RequestInterface;
+use Smalot\Cups\CupsException;
 
 /**
  * Class Client
@@ -20,12 +21,32 @@ use Psr\Http\Message\RequestInterface;
  */
 class Client implements HttpClient
 {
+
     const SOCKET_URL = 'unix:///var/run/cups/cups.sock';
+
+    const AUTHTYPE_BASIC = 'basic';
+
+    const AUTHTYPE_DIGEST = 'digest';
 
     /**
      * @var HttpClient
      */
     protected $httpClient;
+
+    /**
+     * @var string
+     */
+    protected $authType;
+
+    /**
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * @var string
+     */
+    protected $password;
 
     /**
      * Client constructor.
@@ -48,6 +69,34 @@ class Client implements HttpClient
             new AddHostPlugin(new Uri($host)),
           ]
         );
+
+        $this->authType = self::AUTHTYPE_BASIC;
+    }
+
+    /**
+     * @param string $username
+     * @param string $password
+     *
+     * @return $this
+     */
+    public function setAuthentication($username, $password)
+    {
+        $this->username = $username;
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @param string $authType
+     *
+     * @return $this
+     */
+    public function setAuthType($authType)
+    {
+        $this->authType = $authType;
+
+        return $this;
     }
 
     /**
@@ -55,6 +104,25 @@ class Client implements HttpClient
      */
     public function sendRequest(RequestInterface $request)
     {
+        if ($this->username || $this->password) {
+            switch ($this->authType) {
+                case self::AUTHTYPE_BASIC:
+                    $pass = base64_encode($this->username.':'.$this->password);
+                    $authentication = 'Basic '.$pass;
+                    break;
+
+                case self::AUTHTYPE_DIGEST:
+                    throw new CupsException('Auth type not supported');
+//                    $authentication = ''self::_BuildDigest();
+//                    break;
+
+                default:
+                    throw new CupsException('Unknown auth type');
+            }
+
+            $request = $request->withHeader('Authorization', $authentication);
+        }
+
         return $this->httpClient->sendRequest($request);
     }
 

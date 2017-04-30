@@ -13,6 +13,11 @@ use Smalot\Cups\CupsException;
 class ConnectorAbstract
 {
 
+    use Traits\CharsetAware;
+    use Traits\LanguageAware;
+    use Traits\OperationIdAware;
+    use Traits\UsernameAware;
+
     /**
      * @var array
      */
@@ -55,159 +60,159 @@ class ConnectorAbstract
     protected function initTags()
     {
         $this->tagsTypes = [
-          "unsupported" => [
-            "tag" => chr(0x10),
-            "build" => "",
+          'unsupported' => [
+            'tag' => chr(0x10),
+            'build' => '',
           ],
-          "reserved" => [
-            "tag" => chr(0x11),
-            "build" => "",
+          'reserved' => [
+            'tag' => chr(0x11),
+            'build' => '',
           ],
-          "unknown" => [
-            "tag" => chr(0x12),
-            "build" => "",
+          'unknown' => [
+            'tag' => chr(0x12),
+            'build' => '',
           ],
-          "no-value" => [
-            "tag" => chr(0x13),
-            "build" => "no_value",
+          'no-value' => [
+            'tag' => chr(0x13),
+            'build' => 'no_value',
           ],
-          "integer" => [
-            "tag" => chr(0x21),
-            "build" => "integer",
+          'integer' => [
+            'tag' => chr(0x21),
+            'build' => 'integer',
           ],
-          "boolean" => [
-            "tag" => chr(0x22),
-            "build" => "boolean",
+          'boolean' => [
+            'tag' => chr(0x22),
+            'build' => 'boolean',
           ],
-          "enum" => [
-            "tag" => chr(0x23),
-            "build" => "enum",
+          'enum' => [
+            'tag' => chr(0x23),
+            'build' => 'enum',
           ],
-          "octetString" => [
-            "tag" => chr(0x30),
-            "build" => "octet_string",
+          'octetString' => [
+            'tag' => chr(0x30),
+            'build' => 'octet_string',
           ],
-          "datetime" => [
-            "tag" => chr(0x31),
-            "build" => "datetime",
+          'datetime' => [
+            'tag' => chr(0x31),
+            'build' => 'datetime',
           ],
-          "resolution" => [
-            "tag" => chr(0x32),
-            "build" => "resolution",
+          'resolution' => [
+            'tag' => chr(0x32),
+            'build' => 'resolution',
           ],
-          "rangeOfInteger" => [
-            "tag" => chr(0x33),
-            "build" => "range_of_integers",
+          'rangeOfInteger' => [
+            'tag' => chr(0x33),
+            'build' => 'range_of_integers',
           ],
-          "textWithLanguage" => [
-            "tag" => chr(0x35),
-            "build" => "string",
+          'textWithLanguage' => [
+            'tag' => chr(0x35),
+            'build' => 'string',
           ],
-          "nameWithLanguage" => [
-            "tag" => chr(0x36),
-            "build" => "string",
+          'nameWithLanguage' => [
+            'tag' => chr(0x36),
+            'build' => 'string',
           ],
             /*
-               "text" => array ("tag" => chr(0x40),
-               "build" => "string"),
-               "text string" => array ("tag" => chr(0x40),
-               "build" => "string"),
+               'text' => array ('tag' => chr(0x40),
+               'build' => 'string'),
+               'text string' => array ('tag' => chr(0x40),
+               'build' => 'string'),
              */
-          "textWithoutLanguage" => [
-            "tag" => chr(0x41),
-            "build" => "string",
+          'textWithoutLanguage' => [
+            'tag' => chr(0x41),
+            'build' => 'string',
           ],
-          "nameWithoutLanguage" => [
-            "tag" => chr(0x42),
-            "buid" => "string",
+          'nameWithoutLanguage' => [
+            'tag' => chr(0x42),
+            'buid' => 'string',
           ],
-          "keyword" => [
-            "tag" => chr(0x44),
-            "build" => "string",
+          'keyword' => [
+            'tag' => chr(0x44),
+            'build' => 'string',
           ],
-          "uri" => [
-            "tag" => chr(0x45),
-            "build" => "string",
+          'uri' => [
+            'tag' => chr(0x45),
+            'build' => 'string',
           ],
-          "uriScheme" => [
-            "tag" => chr(0x46),
-            "build" => "string",
+          'uriScheme' => [
+            'tag' => chr(0x46),
+            'build' => 'string',
           ],
-          "charset" => [
-            "tag" => chr(0x47),
-            "build" => "string",
+          'charset' => [
+            'tag' => chr(0x47),
+            'build' => 'string',
           ],
-          "naturalLanguage" => [
-            "tag" => chr(0x48),
-            "build" => "string",
+          'naturalLanguage' => [
+            'tag' => chr(0x48),
+            'build' => 'string',
           ],
-          "mimeMediaType" => [
-            "tag" => chr(0x49),
-            "build" => "string",
+          'mimeMediaType' => [
+            'tag' => chr(0x49),
+            'build' => 'string',
           ],
-          "extendedAttributes" => [
-            "tag" => chr(0x7F),
-            "build" => "extended",
+          'extendedAttributes' => [
+            'tag' => chr(0x7F),
+            'build' => 'extended',
           ],
         ];
         $this->operationTags = [
-          "compression" => [
-            "tag" => "keyword",
+          'compression' => [
+            'tag' => 'keyword',
           ],
-          "document-natural-language" => [
-            "tag" => "naturalLanguage",
+          'document-natural-language' => [
+            'tag' => 'naturalLanguage',
           ],
-          "job-k-octets" => [
-            "tag" => "integer",
+          'job-k-octets' => [
+            'tag' => 'integer',
           ],
-          "job-impressions" => [
-            "tag" => "integer",
+          'job-impressions' => [
+            'tag' => 'integer',
           ],
-          "job-media-sheets" => [
-            "tag" => "integer",
+          'job-media-sheets' => [
+            'tag' => 'integer',
           ],
         ];
         $this->jobTags = [
-          "job-priority" => [
-            "tag" => "integer",
+          'job-priority' => [
+            'tag' => 'integer',
           ],
-          "job-hold-until" => [
-            "tag" => "keyword",
+          'job-hold-until' => [
+            'tag' => 'keyword',
           ],
-          "job-sheets" => [
-            "tag" => "keyword",
+          'job-sheets' => [
+            'tag' => 'keyword',
           ], //banner page
-          "multiple-document-handling" => [
-            "tag" => "keyword",
+          'multiple-document-handling' => [
+            'tag' => 'keyword',
           ],
-            //"copies" => array("tag" => "integer"),
-          "finishings" => [
-            "tag" => "enum",
+            //'copies' => array('tag' => 'integer'),
+          'finishings' => [
+            'tag' => 'enum',
           ],
-            //"page-ranges" => array("tag" => "rangeOfInteger"), // has its own function
-            //"sides" => array("tag" => "keyword"), // has its own function
-          "number-up" => [
-            "tag" => "integer",
+            //'page-ranges' => array('tag' => 'rangeOfInteger'), // has its own function
+            //'sides' => array('tag' => 'keyword'), // has its own function
+          'number-up' => [
+            'tag' => 'integer',
           ],
-          "orientation-requested" => [
-            "tag" => "enum",
+          'orientation-requested' => [
+            'tag' => 'enum',
           ],
-          "media" => [
-            "tag" => "keyword",
+          'media' => [
+            'tag' => 'keyword',
           ],
-          "printer-resolution" => [
-            "tag" => "resolution",
+          'printer-resolution' => [
+            'tag' => 'resolution',
           ],
-          "print-quality" => [
-            "tag" => "enum",
+          'print-quality' => [
+            'tag' => 'enum',
           ],
-          "job-message-from-operator" => [
-            "tag" => "textWithoutLanguage",
+          'job-message-from-operator' => [
+            'tag' => 'textWithoutLanguage',
           ],
         ];
         $this->printerTags = [
-          "requested-attributes" => [
-            "tag" => "keyword",
+          'requested-attributes' => [
+            'tag' => 'keyword',
           ],
         ];
     }
@@ -249,7 +254,7 @@ class ConnectorAbstract
     {
         if ($value >= 2147483647 || $value < -2147483648) {
             trigger_error(
-              _("Values must be between -2147483648 and 2147483647: assuming '0'"),
+              _('Values must be between -2147483648 and 2147483647: assuming "0"'),
               E_USER_WARNING
             );
 
@@ -383,5 +388,27 @@ class ConnectorAbstract
         reset($this->printerTags);
 
         return $attributes;
+    }
+
+    /**
+     * @param string $uri
+     *
+     * @return string
+     */
+    protected function buildPrinterURI($uri)
+    {
+        $length = strlen($uri);
+        $length = chr($length);
+
+        while (strlen($length) < 2) {
+            $length = chr(0x00).$length;
+        }
+
+        $metaPrinterUrl = chr(0x45) // uri type | value-tag
+          .chr(0x00).chr(0x0B) // name-length
+          .'printer-uri' // printer-uri | name
+          .$length.$uri;
+
+        return $metaPrinterUrl;
     }
 }
