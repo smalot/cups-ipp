@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\Request;
  */
 class Printer extends ConnectorAbstract
 {
+
     /**
      * @var \Http\Client\HttpClient
      */
@@ -56,6 +57,17 @@ class Printer extends ConnectorAbstract
     public function getAttributes($uri)
     {
         $request = $this->prepareGetAttributesRequest($uri);
+        $response = $this->client->sendRequest($request);
+
+        return CupsResponse::parseResponse($response);
+    }
+
+    /**
+     * @return \Smalot\Cups\Transport\Response
+     */
+    public function getDefault()
+    {
+        $request = $this->prepareGetDefaultRequest();
         $response = $this->client->sendRequest($request);
 
         return CupsResponse::parseResponse($response);
@@ -110,33 +122,7 @@ class Printer extends ConnectorAbstract
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
-
-        // Attributes.
-        if (empty($attributes)) {
-            $attributes = [
-              'printer-uri-supported',
-              'printer-location',
-              'printer-info',
-              'printer-type',
-              'color-supported',
-            ];
-        }
-
-        $meta_attributes = '';
-        for ($i = 0; $i < count($attributes); $i++) {
-            if ($i == 0) {
-                $meta_attributes .= chr(0x44) // Keyword
-                  .$this->getStringLength('requested-attributes')
-                  .'requested-attributes'
-                  .$this->getStringLength($attributes[0])
-                  .$attributes[0];
-            } else {
-                $meta_attributes .= chr(0x44) // Keyword
-                  .chr(0x0).chr(0x0) // zero-length name
-                  .$this->getStringLength($attributes[$i])
-                  .$attributes[$i];
-            }
-        }
+        $metaAttributes = $this->buildPrinterRequestedAttributes($attributes);
 
         $content = chr(0x01).chr(0x01) // IPP version 1.1
           .chr(0x40).chr(0x02) // operation:  cups vendor extension: get printers
@@ -144,7 +130,7 @@ class Printer extends ConnectorAbstract
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$meta_attributes
+          .$metaAttributes
           .chr(0x03);
 
         $headers = ['Content-Type' => 'application/ipp'];
@@ -183,6 +169,32 @@ class Printer extends ConnectorAbstract
     }
 
     /**
+     * @param array $attributes
+     *
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function prepareGetDefaultRequest($attributes = [])
+    {
+        $charset = $this->buildCharset();
+        $language = $this->buildLanguage();
+        $operationId = $this->buildOperationId();
+        $metaAttributes = $this->buildPrinterRequestedAttributes($attributes);
+
+        $content = chr(0x01).chr(0x01) // IPP version 1.1
+          .chr(0x40).chr(0x01) // operation:  cups vendor extension: get default printer
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$metaAttributes
+          .chr(0x03);
+
+        $headers = ['Content-Type' => 'application/ipp'];
+
+        return new Request('POST', '/', $headers, $content);
+    }
+
+    /**
      * @param string $uri
      *
      * @return \GuzzleHttp\Psr7\Request
@@ -195,15 +207,15 @@ class Printer extends ConnectorAbstract
         $username = $this->buildUsername();
         $printerUri = $this->buildPrinterURI($uri);
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x10) // Pause-Printer | operation-id
-          . $operationId //           request-id
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $printerUri
-          . $username
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x10) // Pause-Printer | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$printerUri
+          .$username
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
@@ -223,15 +235,15 @@ class Printer extends ConnectorAbstract
         $username = $this->buildUsername();
         $printerUri = $this->buildPrinterURI($uri);
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x11) // Resume-Printer | operation-id
-          . $operationId //           request-id
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $printerUri
-          . $username
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x11) // Resume-Printer | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$printerUri
+          .$username
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
@@ -254,23 +266,69 @@ class Printer extends ConnectorAbstract
         // Needs a build function call.
         $message = '';
 
-        $content = chr(0x01) . chr(0x01) // 1.1  | version-number
-          . chr(0x00) . chr (0x12) // purge-Jobs | operation-id
-          . $operationId //           request-id
-          . chr(0x01) // start operation-attributes | operation-attributes-tag
-          . $charset
-          . $language
-          . $printerUri
-          . $username
-          . chr(0x22)
-          . $this->getStringLength('purge-jobs')
-          . 'purge-jobs'
-          . $this->getStringLength(chr(0x01))
-          . chr(0x01)
-          . chr(0x03); // end-of-attributes | end-of-attributes-tag
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x12) // purge-Jobs | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$printerUri
+          .$username
+          .chr(0x22)
+          .$this->getStringLength('purge-jobs')
+          .'purge-jobs'
+          .$this->getStringLength(chr(0x01))
+          .chr(0x01)
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
 
         return new Request('POST', '/admin/', $headers, $content);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultAttributes()
+    {
+        return [
+          'printer-uri-supported',
+          'printer-location',
+          'printer-info',
+          'printer-type',
+          'color-supported',
+          'printer-icons',
+        ];
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return string
+     */
+    protected function buildPrinterRequestedAttributes($attributes = [])
+    {
+        if (empty($attributes)) {
+            $attributes = $this->getDefaultAttributes();
+        }
+
+        $metaAttributes = '';
+
+        for ($i = 0; $i < count($attributes); $i++) {
+            if ($i == 0) {
+                $metaAttributes .= chr(0x44) // Keyword
+                  .$this->getStringLength('requested-attributes')
+                  .'requested-attributes'
+                  .$this->getStringLength($attributes[0])
+                  .$attributes[0];
+            } else {
+                $metaAttributes .= chr(0x44) // Keyword
+                  .chr(0x0).chr(0x0) // zero-length name
+                  .$this->getStringLength($attributes[$i])
+                  .$attributes[$i];
+            }
+        }
+
+        return $metaAttributes;
     }
 }
