@@ -1,6 +1,6 @@
 <?php
 
-namespace Smalot\Cups\Connector;
+namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
 use Smalot\Cups\Transport\Response as CupsResponse;
@@ -9,9 +9,9 @@ use GuzzleHttp\Psr7\Request;
 /**
  * Class Printer
  *
- * @package Smalot\Cups\Connector
+ * @package Smalot\Cups\Manager
  */
-class Printer extends ConnectorAbstract
+class PrinterManager extends ManagerAbstract
 {
 
     /**

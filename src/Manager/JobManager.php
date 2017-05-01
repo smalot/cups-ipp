@@ -1,17 +1,20 @@
 <?php
 
-namespace Smalot\Cups\Connector;
+namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
+use Smalot\Cups\CupsException;
+use Smalot\Cups\Model\Job;
+use Smalot\Cups\Model\JobInterface;
 use Smalot\Cups\Transport\Response as CupsResponse;
 use GuzzleHttp\Psr7\Request;
 
 /**
  * Class Job
  *
- * @package Smalot\Cups\Connector
+ * @package Smalot\Cups\Manager
  */
-class Job extends ConnectorAbstract
+class JobManager extends ManagerAbstract
 {
 
     /**
@@ -37,13 +40,13 @@ class Job extends ConnectorAbstract
     }
 
     /**
-     * @param $uri
+     * @param string $uri
      * @param bool $myJobs
      * @param int $limit
      * @param string $whichJobs
      * @param bool $subset
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return \Smalot\Cups\Model\JobInterface[]
      */
     public function getList(
       $uri,
@@ -54,76 +57,121 @@ class Job extends ConnectorAbstract
     ) {
         $request = $this->prepareGetListRequest($uri, $myJobs, $limit, $whichJobs, $subset);
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
+        $values = $result->getValues();
 
-        return CupsResponse::parseResponse($response);
+        $list = [];
+
+        foreach ($values['job-attributes'] as $values) {
+            $job = new Job();
+            $this->fillAttributes($job, $values);
+
+            $list[] = $job;
+        }
+
+        return $list;
     }
 
     /**
-     * @param $jobUri
+     * @param \Smalot\Cups\Model\JobInterface $job
      * @param bool $subset
      * @param string $attributesGroup
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return \Smalot\Cups\Model\JobInterface
      */
-    public function getAttributes($jobUri, $subset = false, $attributesGroup = 'all')
+    public function loadAttributes(JobInterface $job, $subset = false, $attributesGroup = 'all')
     {
-        $request = $this->prepareGetAttributesRequest($jobUri, $subset, $attributesGroup);
+        $request = $this->prepareLoadAttributesRequest($job->getUri(), $subset, $attributesGroup);
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
+        $values = $result->getValues();
 
-        return CupsResponse::parseResponse($response);
+        if (isset($values['job-attributes'][0])) {
+            $this->fillAttributes($job, $values['job-attributes'][0]);
+        }
+
+        return $job;
     }
 
     /**
-     * @param string $uri
+     * @param JobInterface $job
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
+     * @throws \Smalot\Cups\CupsException
      */
-    public function cancel($uri)
+    public function cancel(JobInterface $job)
     {
-        $request = $this->prepareCancelRequest($uri);
+        $request = $this->prepareCancelRequest($job->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        if ($result->getStatusCode() != 'successfull-ok') {
+            $message = $result->getStatusMessage() ?:$result->getStatusCode();
+            throw new CupsException($message);
+        }
+
+        return true;
     }
 
     /**
-     * @param string $uri
+     * @param JobInterface $job
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
+     * @throws \Smalot\Cups\CupsException
      */
-    public function release($uri)
+    public function release(JobInterface $job)
     {
-        $request = $this->prepareReleaseRequest($uri);
+        $request = $this->prepareReleaseRequest($job->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        if ($result->getStatusCode() != 'successfull-ok') {
+            $message = $result->getStatusMessage() ?:$result->getStatusCode();
+            throw new CupsException($message);
+        }
+
+        return true;
     }
 
     /**
-     * @param string $uri
+     * @param JobInterface $job
      * @param string $until
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
+     * @throws \Smalot\Cups\CupsException
      */
-    public function hold($uri, $until = 'indefinite')
+    public function hold(JobInterface $job, $until = 'indefinite')
     {
-        $request = $this->prepareHoldRequest($uri, $until);
+        $request = $this->prepareHoldRequest($job->getUri(), $until);
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        if ($result->getStatusCode() != 'successfull-ok') {
+            $message = $result->getStatusMessage() ?:$result->getStatusCode();
+            throw new CupsException($message);
+        }
+
+        return true;
     }
 
     /**
-     * @param string $uri
+     * @param JobInterface $job
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
+     * @throws \Smalot\Cups\CupsException
      */
-    public function restart($uri)
+    public function restart(JobInterface $job)
     {
-        $request = $this->prepareRestartRequest($uri);
+        $request = $this->prepareRestartRequest($job->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        if ($result->getStatusCode() != 'successfull-ok') {
+            $message = $result->getStatusMessage() ?:$result->getStatusCode();
+            throw new CupsException($message);
+        }
+
+        return true;
     }
 
     /**
@@ -236,7 +284,7 @@ class Job extends ConnectorAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareGetAttributesRequest($uri, $subset = false, $attributesGroup = 'all')
+    protected function prepareLoadAttributesRequest($uri, $subset = false, $attributesGroup = 'all')
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
@@ -453,5 +501,33 @@ class Job extends ConnectorAbstract
         $headers = ['Content-Type' => 'application/ipp'];
 
         return new Request('POST', '/jobs/', $headers, $content);
+    }
+
+    /**
+     * @param \Smalot\Cups\Model\JobInterface $job
+     * @param $item
+     *
+     * @return \Smalot\Cups\Model\JobInterface
+     */
+    protected function fillAttributes(JobInterface $job, $item)
+    {
+        $job->setId($item['job-id'][0]);
+        $job->setUri($item['job-uri'][0]);
+        $job->setName($item['job-name'][0]);
+        $job->setPrinterUri($item['job-printer-uri'][0]);
+        $job->setUsername($item['job-originating-user-name'][0]);
+        $job->setState($item['job-state'][0]);
+        $job->setStateReason($item['job-state-reasons'][0]);
+
+        if (isset($item['number-up'][0])) {
+            $job->setCopies($item['number-up'][0]);
+        }
+
+        // Merge with attributes already set.
+        $attributes = $job->getAttributes();
+        $attributes += $item;
+        $job->setAttributes($attributes);
+
+        return $job;
     }
 }

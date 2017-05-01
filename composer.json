@@ -18,11 +18,17 @@
         "guzzlehttp/psr7": "^1.2"
     },
     "require-dev": {
-        "symfony/debug": "^3.2"
+        "symfony/debug": "^3.2",
+        "atoum/atoum": "^3.0"
     },
     "autoload": {
         "psr-4": {
             "Smalot\\Cups\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Smalot\\Cups\\Tests\\Units\\": "tests/"
         }
     }
 }

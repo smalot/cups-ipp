@@ -1,11 +1,11 @@
 <?php
 
-namespace Smalot\Cups\Connector\Traits;
+namespace Smalot\Cups\Manager\Traits;
 
 /**
  * Trait OperationIdAware
  *
- * @package Smalot\Cups\Connector\Traits
+ * @package Smalot\Cups\Manager\Traits
  */
 trait OperationIdAware
 {

@@ -90,6 +90,18 @@ class Response
     /**
      * @return string
      */
+    public function getStatusMessage()
+    {
+        if (!empty($this->values['operation-attributes'][0]['status-message'][0])) {
+            return $this->values['operation-attributes'][0]['status-message'][0];
+        }
+
+        return false;
+    }
+
+    /**
+     * @return string
+     */
     public function getRequestId()
     {
         return $this->requestId;
@@ -136,16 +148,6 @@ class Response
 
         unset($values['operation-attributes']);
         unset($values['end-of-attributes']);
-
-        if (count($values) == 1) {
-            $entry = reset($values);
-
-            if (count($entry) == 1) {
-                return reset($entry);
-            }
-
-            return $entry;
-        }
 
         return $values;
     }

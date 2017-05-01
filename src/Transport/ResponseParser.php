@@ -1195,7 +1195,7 @@ class ResponseParser
         }
         if ($value_parsed % 524288 == 262144) {
             $type[18] = 'fax-device';
-            //$value_parsed -= 262144;
+            $value_parsed -= 262144;
         }
 
         ksort($type);

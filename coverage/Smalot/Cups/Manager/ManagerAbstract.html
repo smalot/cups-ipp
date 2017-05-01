@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Language" content="en" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>CupsIpp : code coverage of Smalot\Cups\Manager\ManagerAbstract</title>
+		<link rel="stylesheet" media="screen" type="text/css" href="../../../screen.css" title="Screen" />
+	</head>
+	<body>
+		<div id="header">
+			<h1>Code coverage of <a href="../../../index.html">CupsIpp</a>: Smalot\Cups\Manager\ManagerAbstract</h1>
+			<h2>Class code coverage <span>62.78%</span></h2>
+		</div>
+		<div id="page">
+			<div id="content">
+				<h3>Methods</h3>
+				<ul class="summary">
+					
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 100%"></div>
+										<div class="label">
+											<span class="percent">100%</span>
+											<a href="#init">init</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 100%"></div>
+										<div class="label">
+											<span class="percent">100%</span>
+											<a href="#initTags">initTags</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 58.33%"></div>
+										<div class="label">
+											<span class="percent">58.33%</span>
+											<a href="#getStringLength">getStringLength</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 72.73%"></div>
+										<div class="label">
+											<span class="percent">72.73%</span>
+											<a href="#buildInteger">buildInteger</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 0%"></div>
+										<div class="label">
+											<span class="percent">0%</span>
+											<a href="#buildOperationAttributes">buildOperationAttributes</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 0%"></div>
+										<div class="label">
+											<span class="percent">0%</span>
+											<a href="#buildJobAttributes">buildJobAttributes</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 0%"></div>
+										<div class="label">
+											<span class="percent">0%</span>
+											<a href="#buildPrinterAttributes">buildPrinterAttributes</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 100%"></div>
+										<div class="label">
+											<span class="percent">100%</span>
+											<a href="#buildPrinterURI">buildPrinterURI</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 0%"></div>
+										<div class="label">
+											<span class="percent">0%</span>
+											<a href="#buildJobURI">buildJobURI</a>
+										</div>
+									</div>
+								
+							</li>
+						
+					
+				</ul>
+				<h3>Source</h3>
+				<table cellpadding="0" cellspacing="0" class="source">
+					<tr><th class="number">Line</th><th>Code</th></tr>
+					<tr><td class="number"><a name="fillAttributes"></a>1</td><td><pre>&lt;?php
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>2</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>3</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>4</td><td><pre>namespace Smalot\Cups\Manager;
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>5</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>6</td><td><pre>use Smalot\Cups\CupsException;
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>7</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>8</td><td><pre>/**
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>9</td><td><pre> * Class ManagerAbstract
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>10</td><td><pre> *
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>11</td><td><pre> * @package Smalot\Cups\Manager
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>12</td><td><pre> */
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>13</td><td><pre>class ManagerAbstract
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>14</td><td><pre>{
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>15</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>16</td><td><pre>    use Traits\CharsetAware;
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>17</td><td><pre>    use Traits\LanguageAware;
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>18</td><td><pre>    use Traits\OperationIdAware;
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>19</td><td><pre>    use Traits\UsernameAware;
+</pre></td></tr><tr><td class="number"><a name="fillAttributes"></a>20</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="getUsername"></a>21</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="getUsername"></a>22</td><td><pre>     * @var array
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>23</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>24</td><td><pre>    protected $tagsTypes;
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>25</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>26</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>27</td><td><pre>     * @var array
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>28</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>29</td><td><pre>    protected $operationTags;
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>30</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="setUsername"></a>31</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="setUsername"></a>32</td><td><pre>     * @var array
+</pre></td></tr><tr><td class="number"><a name="setUsername"></a>33</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="setUsername"></a>34</td><td><pre>    protected $jobTags;
+</pre></td></tr><tr><td class="number"><a name="setUsername"></a>35</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="setUsername"></a>36</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>37</td><td><pre>     * @var array
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>38</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>39</td><td><pre>    protected $printerTags;
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>40</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>41</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>42</td><td><pre>     * ManagerAbstract constructor.
+</pre></td></tr><tr><td class="number"><a name="buildUsername"></a>43</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="__construct"></a>44</td><td><pre>    public function __construct()
+</pre></td></tr><tr><td class="number"><a name="__construct"></a>45</td><td><pre>    {
+</pre></td></tr><tr><td class="number"><a name="__construct"></a>46</td><td><pre>        $this-&gt;init();
+</pre></td></tr><tr><td class="number"><a name="__construct"></a>47</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="__construct"></a>48</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>49</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>50</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>51</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="init"></a>52</td><td><pre>    protected function init()
+</pre></td></tr><tr><td class="number"><a name="init"></a>53</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">54</td><td><pre>        $this-&gt;initTags();
+</pre></td></tr><tr class="covered"><td class="number">55</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="init"></a>56</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="init"></a>57</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="init"></a>58</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="init"></a>59</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>60</td><td><pre>    protected function initTags()
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>61</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">62</td><td><pre>        $this-&gt;tagsTypes = [
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>63</td><td><pre>          &#039;unsupported&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">64</td><td><pre>            &#039;tag&#039; =&gt; chr(0x10),
+</pre></td></tr><tr class="covered"><td class="number">65</td><td><pre>            &#039;build&#039; =&gt; &#039;&#039;,
+</pre></td></tr><tr class="covered"><td class="number">66</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>67</td><td><pre>          &#039;reserved&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">68</td><td><pre>            &#039;tag&#039; =&gt; chr(0x11),
+</pre></td></tr><tr class="covered"><td class="number">69</td><td><pre>            &#039;build&#039; =&gt; &#039;&#039;,
+</pre></td></tr><tr class="covered"><td class="number">70</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>71</td><td><pre>          &#039;unknown&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">72</td><td><pre>            &#039;tag&#039; =&gt; chr(0x12),
+</pre></td></tr><tr class="covered"><td class="number">73</td><td><pre>            &#039;build&#039; =&gt; &#039;&#039;,
+</pre></td></tr><tr class="covered"><td class="number">74</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>75</td><td><pre>          &#039;no-value&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">76</td><td><pre>            &#039;tag&#039; =&gt; chr(0x13),
+</pre></td></tr><tr class="covered"><td class="number">77</td><td><pre>            &#039;build&#039; =&gt; &#039;no_value&#039;,
+</pre></td></tr><tr class="covered"><td class="number">78</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>79</td><td><pre>          &#039;integer&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">80</td><td><pre>            &#039;tag&#039; =&gt; chr(0x21),
+</pre></td></tr><tr class="covered"><td class="number">81</td><td><pre>            &#039;build&#039; =&gt; &#039;integer&#039;,
+</pre></td></tr><tr class="covered"><td class="number">82</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>83</td><td><pre>          &#039;boolean&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">84</td><td><pre>            &#039;tag&#039; =&gt; chr(0x22),
+</pre></td></tr><tr class="covered"><td class="number">85</td><td><pre>            &#039;build&#039; =&gt; &#039;boolean&#039;,
+</pre></td></tr><tr class="covered"><td class="number">86</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>87</td><td><pre>          &#039;enum&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">88</td><td><pre>            &#039;tag&#039; =&gt; chr(0x23),
+</pre></td></tr><tr class="covered"><td class="number">89</td><td><pre>            &#039;build&#039; =&gt; &#039;enum&#039;,
+</pre></td></tr><tr class="covered"><td class="number">90</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>91</td><td><pre>          &#039;octetString&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">92</td><td><pre>            &#039;tag&#039; =&gt; chr(0x30),
+</pre></td></tr><tr class="covered"><td class="number">93</td><td><pre>            &#039;build&#039; =&gt; &#039;octet_string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">94</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>95</td><td><pre>          &#039;datetime&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">96</td><td><pre>            &#039;tag&#039; =&gt; chr(0x31),
+</pre></td></tr><tr class="covered"><td class="number">97</td><td><pre>            &#039;build&#039; =&gt; &#039;datetime&#039;,
+</pre></td></tr><tr class="covered"><td class="number">98</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>99</td><td><pre>          &#039;resolution&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">100</td><td><pre>            &#039;tag&#039; =&gt; chr(0x32),
+</pre></td></tr><tr class="covered"><td class="number">101</td><td><pre>            &#039;build&#039; =&gt; &#039;resolution&#039;,
+</pre></td></tr><tr class="covered"><td class="number">102</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>103</td><td><pre>          &#039;rangeOfInteger&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">104</td><td><pre>            &#039;tag&#039; =&gt; chr(0x33),
+</pre></td></tr><tr class="covered"><td class="number">105</td><td><pre>            &#039;build&#039; =&gt; &#039;range_of_integers&#039;,
+</pre></td></tr><tr class="covered"><td class="number">106</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>107</td><td><pre>          &#039;textWithLanguage&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">108</td><td><pre>            &#039;tag&#039; =&gt; chr(0x35),
+</pre></td></tr><tr class="covered"><td class="number">109</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">110</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>111</td><td><pre>          &#039;nameWithLanguage&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">112</td><td><pre>            &#039;tag&#039; =&gt; chr(0x36),
+</pre></td></tr><tr class="covered"><td class="number">113</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">114</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>115</td><td><pre>            /*
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>116</td><td><pre>               &#039;text&#039; =&gt; array (&#039;tag&#039; =&gt; chr(0x40),
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>117</td><td><pre>               &#039;build&#039; =&gt; &#039;string&#039;),
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>118</td><td><pre>               &#039;text string&#039; =&gt; array (&#039;tag&#039; =&gt; chr(0x40),
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>119</td><td><pre>               &#039;build&#039; =&gt; &#039;string&#039;),
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>120</td><td><pre>             */
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>121</td><td><pre>          &#039;textWithoutLanguage&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">122</td><td><pre>            &#039;tag&#039; =&gt; chr(0x41),
+</pre></td></tr><tr class="covered"><td class="number">123</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">124</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>125</td><td><pre>          &#039;nameWithoutLanguage&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">126</td><td><pre>            &#039;tag&#039; =&gt; chr(0x42),
+</pre></td></tr><tr class="covered"><td class="number">127</td><td><pre>            &#039;buid&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">128</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>129</td><td><pre>          &#039;keyword&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">130</td><td><pre>            &#039;tag&#039; =&gt; chr(0x44),
+</pre></td></tr><tr class="covered"><td class="number">131</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">132</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>133</td><td><pre>          &#039;uri&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">134</td><td><pre>            &#039;tag&#039; =&gt; chr(0x45),
+</pre></td></tr><tr class="covered"><td class="number">135</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">136</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>137</td><td><pre>          &#039;uriScheme&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">138</td><td><pre>            &#039;tag&#039; =&gt; chr(0x46),
+</pre></td></tr><tr class="covered"><td class="number">139</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">140</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>141</td><td><pre>          &#039;charset&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">142</td><td><pre>            &#039;tag&#039; =&gt; chr(0x47),
+</pre></td></tr><tr class="covered"><td class="number">143</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">144</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>145</td><td><pre>          &#039;naturalLanguage&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">146</td><td><pre>            &#039;tag&#039; =&gt; chr(0x48),
+</pre></td></tr><tr class="covered"><td class="number">147</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">148</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>149</td><td><pre>          &#039;mimeMediaType&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">150</td><td><pre>            &#039;tag&#039; =&gt; chr(0x49),
+</pre></td></tr><tr class="covered"><td class="number">151</td><td><pre>            &#039;build&#039; =&gt; &#039;string&#039;,
+</pre></td></tr><tr class="covered"><td class="number">152</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>153</td><td><pre>          &#039;extendedAttributes&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">154</td><td><pre>            &#039;tag&#039; =&gt; chr(0x7F),
+</pre></td></tr><tr class="covered"><td class="number">155</td><td><pre>            &#039;build&#039; =&gt; &#039;extended&#039;,
+</pre></td></tr><tr class="covered"><td class="number">156</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>157</td><td><pre>        ];
+</pre></td></tr><tr class="covered"><td class="number">158</td><td><pre>        $this-&gt;operationTags = [
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>159</td><td><pre>          &#039;compression&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">160</td><td><pre>            &#039;tag&#039; =&gt; &#039;keyword&#039;,
+</pre></td></tr><tr class="covered"><td class="number">161</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>162</td><td><pre>          &#039;document-natural-language&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">163</td><td><pre>            &#039;tag&#039; =&gt; &#039;naturalLanguage&#039;,
+</pre></td></tr><tr class="covered"><td class="number">164</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>165</td><td><pre>          &#039;job-k-octets&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">166</td><td><pre>            &#039;tag&#039; =&gt; &#039;integer&#039;,
+</pre></td></tr><tr class="covered"><td class="number">167</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>168</td><td><pre>          &#039;job-impressions&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">169</td><td><pre>            &#039;tag&#039; =&gt; &#039;integer&#039;,
+</pre></td></tr><tr class="covered"><td class="number">170</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>171</td><td><pre>          &#039;job-media-sheets&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">172</td><td><pre>            &#039;tag&#039; =&gt; &#039;integer&#039;,
+</pre></td></tr><tr class="covered"><td class="number">173</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>174</td><td><pre>        ];
+</pre></td></tr><tr class="covered"><td class="number">175</td><td><pre>        $this-&gt;jobTags = [
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>176</td><td><pre>          &#039;job-priority&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">177</td><td><pre>            &#039;tag&#039; =&gt; &#039;integer&#039;,
+</pre></td></tr><tr class="covered"><td class="number">178</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>179</td><td><pre>          &#039;job-hold-until&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">180</td><td><pre>            &#039;tag&#039; =&gt; &#039;keyword&#039;,
+</pre></td></tr><tr class="covered"><td class="number">181</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>182</td><td><pre>          &#039;job-sheets&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">183</td><td><pre>            &#039;tag&#039; =&gt; &#039;keyword&#039;,
+</pre></td></tr><tr class="covered"><td class="number">184</td><td><pre>          ], //banner page
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>185</td><td><pre>          &#039;multiple-document-handling&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">186</td><td><pre>            &#039;tag&#039; =&gt; &#039;keyword&#039;,
+</pre></td></tr><tr class="covered"><td class="number">187</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>188</td><td><pre>            //&#039;copies&#039; =&gt; array(&#039;tag&#039; =&gt; &#039;integer&#039;),
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>189</td><td><pre>          &#039;finishings&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">190</td><td><pre>            &#039;tag&#039; =&gt; &#039;enum&#039;,
+</pre></td></tr><tr class="covered"><td class="number">191</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>192</td><td><pre>            //&#039;page-ranges&#039; =&gt; array(&#039;tag&#039; =&gt; &#039;rangeOfInteger&#039;), // has its own function
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>193</td><td><pre>            //&#039;sides&#039; =&gt; array(&#039;tag&#039; =&gt; &#039;keyword&#039;), // has its own function
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>194</td><td><pre>          &#039;number-up&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">195</td><td><pre>            &#039;tag&#039; =&gt; &#039;integer&#039;,
+</pre></td></tr><tr class="covered"><td class="number">196</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>197</td><td><pre>          &#039;orientation-requested&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">198</td><td><pre>            &#039;tag&#039; =&gt; &#039;enum&#039;,
+</pre></td></tr><tr class="covered"><td class="number">199</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>200</td><td><pre>          &#039;media&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">201</td><td><pre>            &#039;tag&#039; =&gt; &#039;keyword&#039;,
+</pre></td></tr><tr class="covered"><td class="number">202</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>203</td><td><pre>          &#039;printer-resolution&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">204</td><td><pre>            &#039;tag&#039; =&gt; &#039;resolution&#039;,
+</pre></td></tr><tr class="covered"><td class="number">205</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>206</td><td><pre>          &#039;print-quality&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">207</td><td><pre>            &#039;tag&#039; =&gt; &#039;enum&#039;,
+</pre></td></tr><tr class="covered"><td class="number">208</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>209</td><td><pre>          &#039;job-message-from-operator&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">210</td><td><pre>            &#039;tag&#039; =&gt; &#039;textWithoutLanguage&#039;,
+</pre></td></tr><tr class="covered"><td class="number">211</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>212</td><td><pre>        ];
+</pre></td></tr><tr class="covered"><td class="number">213</td><td><pre>        $this-&gt;printerTags = [
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>214</td><td><pre>          &#039;requested-attributes&#039; =&gt; [
+</pre></td></tr><tr class="covered"><td class="number">215</td><td><pre>            &#039;tag&#039; =&gt; &#039;keyword&#039;,
+</pre></td></tr><tr class="covered"><td class="number">216</td><td><pre>          ],
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>217</td><td><pre>        ];
+</pre></td></tr><tr class="covered"><td class="number">218</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>219</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>220</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>221</td><td><pre>     * @param string $string
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>222</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>223</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>224</td><td><pre>     * @throws \Smalot\Cups\CupsException
+</pre></td></tr><tr><td class="number"><a name="initTags"></a>225</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>226</td><td><pre>    protected function getStringLength($string)
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>227</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">228</td><td><pre>        $length = strlen($string);
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>229</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">230</td><td><pre>        if ($length &gt; ((0xFF &lt;&lt; 8) + 0xFF)) {
+</pre></td></tr><tr class="notCovered"><td class="number">231</td><td><pre>            $message = sprintf(
+</pre></td></tr><tr class="notCovered"><td class="number">232</td><td><pre>              &#039;max string length for an ipp meta-information = %d, while here %d&#039;,
+</pre></td></tr><tr class="notCovered"><td class="number">233</td><td><pre>              ((0xFF &lt;&lt; 8) + 0xFF),
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>234</td><td><pre>              $length
+</pre></td></tr><tr class="notCovered"><td class="number">235</td><td><pre>            );
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>236</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">237</td><td><pre>            throw new CupsException($message);
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>238</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>239</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">240</td><td><pre>        $int1 = $length &amp; 0xFF;
+</pre></td></tr><tr class="covered"><td class="number">241</td><td><pre>        $length -= $int1;
+</pre></td></tr><tr class="covered"><td class="number">242</td><td><pre>        $length = $length &gt;&gt; 8;
+</pre></td></tr><tr class="covered"><td class="number">243</td><td><pre>        $int2 = $length &amp; 0xFF;
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>244</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">245</td><td><pre>        return chr($int2).chr($int1);
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>246</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>247</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>248</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>249</td><td><pre>     * @param string $value
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>250</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>251</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="getStringLength"></a>252</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>253</td><td><pre>    protected function buildInteger($value)
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>254</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">255</td><td><pre>        if ($value &gt;= 2147483647 || $value &lt; -2147483648) {
+</pre></td></tr><tr class="notCovered"><td class="number">256</td><td><pre>            trigger_error(
+</pre></td></tr><tr class="notCovered"><td class="number">257</td><td><pre>              _(&#039;Values must be between -2147483648 and 2147483647: assuming &quot;0&quot;&#039;),
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>258</td><td><pre>              E_USER_WARNING
+</pre></td></tr><tr class="notCovered"><td class="number">259</td><td><pre>            );
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>260</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">261</td><td><pre>            return chr(0x00).chr(0x00).chr(0x00).chr(0x00);
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>262</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>263</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">264</td><td><pre>        $initial_value = $value;
+</pre></td></tr><tr class="covered"><td class="number">265</td><td><pre>        $int1 = $value &amp; 0xFF;
+</pre></td></tr><tr class="covered"><td class="number">266</td><td><pre>        $value -= $int1;
+</pre></td></tr><tr class="covered"><td class="number">267</td><td><pre>        $value = $value &gt;&gt; 8;
+</pre></td></tr><tr class="covered"><td class="number">268</td><td><pre>        $int2 = $value &amp; 0xFF;
+</pre></td></tr><tr class="covered"><td class="number">269</td><td><pre>        $value -= $int2;
+</pre></td></tr><tr class="covered"><td class="number">270</td><td><pre>        $value = $value &gt;&gt; 8;
+</pre></td></tr><tr class="covered"><td class="number">271</td><td><pre>        $int3 = $value &amp; 0xFF;
+</pre></td></tr><tr class="covered"><td class="number">272</td><td><pre>        $value -= $int3;
+</pre></td></tr><tr class="covered"><td class="number">273</td><td><pre>        $value = $value &gt;&gt; 8;
+</pre></td></tr><tr class="covered"><td class="number">274</td><td><pre>        $int4 = $value &amp; 0xFF; //64bits
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>275</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">276</td><td><pre>        if ($initial_value &lt; 0) {
+</pre></td></tr><tr class="notCovered"><td class="number">277</td><td><pre>            $int4 = chr($int4) | chr(0x80);
+</pre></td></tr><tr class="notCovered"><td class="number">278</td><td><pre>        } else {
+</pre></td></tr><tr class="covered"><td class="number">279</td><td><pre>            $int4 = chr($int4);
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>280</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>281</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">282</td><td><pre>        $value = $int4.chr($int3).chr($int2).chr($int1);
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>283</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">284</td><td><pre>        return $value;
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>285</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>286</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>287</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>288</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="buildInteger"></a>289</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>290</td><td><pre>    protected function buildOperationAttributes()
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>291</td><td><pre>    {
+</pre></td></tr><tr class="notCovered"><td class="number">292</td><td><pre>        $attributes = &#039;&#039;;
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>293</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">294</td><td><pre>        foreach ($this-&gt;operationTags as $key =&gt; $values) {
+</pre></td></tr><tr class="notCovered"><td class="number">295</td><td><pre>            $item = 0;
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>296</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">297</td><td><pre>            if (array_key_exists(&#039;value&#039;, $values)) {
+</pre></td></tr><tr class="notCovered"><td class="number">298</td><td><pre>                foreach ($values[&#039;value&#039;] as $item_value) {
+</pre></td></tr><tr class="notCovered"><td class="number">299</td><td><pre>                    if ($item == 0) {
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>300</td><td><pre>                        $attributes .=
+</pre></td></tr><tr class="notCovered"><td class="number">301</td><td><pre>                          $values[&#039;systag&#039;]
+</pre></td></tr><tr class="notCovered"><td class="number">302</td><td><pre>                          .$this-&gt;getStringLength($key)
+</pre></td></tr><tr class="notCovered"><td class="number">303</td><td><pre>                          .$key
+</pre></td></tr><tr class="notCovered"><td class="number">304</td><td><pre>                          .$this-&gt;getStringLength($item_value)
+</pre></td></tr><tr class="notCovered"><td class="number">305</td><td><pre>                          .$item_value;
+</pre></td></tr><tr class="notCovered"><td class="number">306</td><td><pre>                    } else {
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>307</td><td><pre>                        $attributes .=
+</pre></td></tr><tr class="notCovered"><td class="number">308</td><td><pre>                          $values[&#039;systag&#039;]
+</pre></td></tr><tr class="notCovered"><td class="number">309</td><td><pre>                          .$this-&gt;getStringLength(&#039;&#039;)
+</pre></td></tr><tr class="notCovered"><td class="number">310</td><td><pre>                          .$this-&gt;getStringLength($item_value)
+</pre></td></tr><tr class="notCovered"><td class="number">311</td><td><pre>                          .$item_value;
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>312</td><td><pre>                    }
+</pre></td></tr><tr class="notCovered"><td class="number">313</td><td><pre>                    $item++;
+</pre></td></tr><tr class="notCovered"><td class="number">314</td><td><pre>                }
+</pre></td></tr><tr class="notCovered"><td class="number">315</td><td><pre>            }
+</pre></td></tr><tr class="notCovered"><td class="number">316</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>317</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">318</td><td><pre>        reset($this-&gt;operationTags);
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>319</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">320</td><td><pre>        return $attributes;
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>321</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>322</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>323</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>324</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="buildOperationAttributes"></a>325</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>326</td><td><pre>    protected function buildJobAttributes()
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>327</td><td><pre>    {
+</pre></td></tr><tr class="notCovered"><td class="number">328</td><td><pre>        $attributes = &#039;&#039;;
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>329</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">330</td><td><pre>        foreach ($this-&gt;jobTags as $key =&gt; $values) {
+</pre></td></tr><tr class="notCovered"><td class="number">331</td><td><pre>            $item = 0;
+</pre></td></tr><tr class="notCovered"><td class="number">332</td><td><pre>            if (array_key_exists(&#039;value&#039;, $values)) {
+</pre></td></tr><tr class="notCovered"><td class="number">333</td><td><pre>                foreach ($values[&#039;value&#039;] as $item_value) {
+</pre></td></tr><tr class="notCovered"><td class="number">334</td><td><pre>                    if ($item == 0) {
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>335</td><td><pre>                        $attributes .=
+</pre></td></tr><tr class="notCovered"><td class="number">336</td><td><pre>                          $values[&#039;systag&#039;]
+</pre></td></tr><tr class="notCovered"><td class="number">337</td><td><pre>                          .$this-&gt;getStringLength($key)
+</pre></td></tr><tr class="notCovered"><td class="number">338</td><td><pre>                          .$key
+</pre></td></tr><tr class="notCovered"><td class="number">339</td><td><pre>                          .$this-&gt;getStringLength($item_value)
+</pre></td></tr><tr class="notCovered"><td class="number">340</td><td><pre>                          .$item_value;
+</pre></td></tr><tr class="notCovered"><td class="number">341</td><td><pre>                    } else {
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>342</td><td><pre>                        $attributes .=
+</pre></td></tr><tr class="notCovered"><td class="number">343</td><td><pre>                          $values[&#039;systag&#039;]
+</pre></td></tr><tr class="notCovered"><td class="number">344</td><td><pre>                          .$this-&gt;getStringLength(&#039;&#039;)
+</pre></td></tr><tr class="notCovered"><td class="number">345</td><td><pre>                          .$this-&gt;getStringLength($item_value)
+</pre></td></tr><tr class="notCovered"><td class="number">346</td><td><pre>                          .$item_value;
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>347</td><td><pre>                    }
+</pre></td></tr><tr class="notCovered"><td class="number">348</td><td><pre>                    $item++;
+</pre></td></tr><tr class="notCovered"><td class="number">349</td><td><pre>                }
+</pre></td></tr><tr class="notCovered"><td class="number">350</td><td><pre>            }
+</pre></td></tr><tr class="notCovered"><td class="number">351</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>352</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">353</td><td><pre>        reset($this-&gt;jobTags);
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>354</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">355</td><td><pre>        return $attributes;
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>356</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>357</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>358</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>359</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="buildJobAttributes"></a>360</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>361</td><td><pre>    protected function buildPrinterAttributes()
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>362</td><td><pre>    {
+</pre></td></tr><tr class="notCovered"><td class="number">363</td><td><pre>        $attributes = &#039;&#039;;
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>364</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">365</td><td><pre>        foreach ($this-&gt;printerTags as $key =&gt; $values) {
+</pre></td></tr><tr class="notCovered"><td class="number">366</td><td><pre>            $item = 0;
+</pre></td></tr><tr class="notCovered"><td class="number">367</td><td><pre>            if (array_key_exists(&#039;value&#039;, $values)) {
+</pre></td></tr><tr class="notCovered"><td class="number">368</td><td><pre>                foreach ($values[&#039;value&#039;] as $item_value) {
+</pre></td></tr><tr class="notCovered"><td class="number">369</td><td><pre>                    if ($item == 0) {
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>370</td><td><pre>                        $attributes .=
+</pre></td></tr><tr class="notCovered"><td class="number">371</td><td><pre>                          $values[&#039;systag&#039;]
+</pre></td></tr><tr class="notCovered"><td class="number">372</td><td><pre>                          .$this-&gt;getStringLength($key)
+</pre></td></tr><tr class="notCovered"><td class="number">373</td><td><pre>                          .$key
+</pre></td></tr><tr class="notCovered"><td class="number">374</td><td><pre>                          .$this-&gt;getStringLength($item_value)
+</pre></td></tr><tr class="notCovered"><td class="number">375</td><td><pre>                          .$item_value;
+</pre></td></tr><tr class="notCovered"><td class="number">376</td><td><pre>                    } else {
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>377</td><td><pre>                        $attributes .=
+</pre></td></tr><tr class="notCovered"><td class="number">378</td><td><pre>                          $values[&#039;systag&#039;]
+</pre></td></tr><tr class="notCovered"><td class="number">379</td><td><pre>                          .$this-&gt;getStringLength(&#039;&#039;)
+</pre></td></tr><tr class="notCovered"><td class="number">380</td><td><pre>                          .$this-&gt;getStringLength($item_value)
+</pre></td></tr><tr class="notCovered"><td class="number">381</td><td><pre>                          .$item_value;
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>382</td><td><pre>                    }
+</pre></td></tr><tr class="notCovered"><td class="number">383</td><td><pre>                    $item++;
+</pre></td></tr><tr class="notCovered"><td class="number">384</td><td><pre>                }
+</pre></td></tr><tr class="notCovered"><td class="number">385</td><td><pre>            }
+</pre></td></tr><tr class="notCovered"><td class="number">386</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>387</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">388</td><td><pre>        reset($this-&gt;printerTags);
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>389</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">390</td><td><pre>        return $attributes;
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>391</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>392</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>393</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>394</td><td><pre>     * @param string $uri
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>395</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>396</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="buildPrinterAttributes"></a>397</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>398</td><td><pre>    protected function buildPrinterURI($uri)
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>399</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">400</td><td><pre>        $length = strlen($uri);
+</pre></td></tr><tr class="covered"><td class="number">401</td><td><pre>        $length = chr($length);
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>402</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">403</td><td><pre>        while (strlen($length) &lt; 2) {
+</pre></td></tr><tr class="covered"><td class="number">404</td><td><pre>            $length = chr(0x00).$length;
+</pre></td></tr><tr class="covered"><td class="number">405</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>406</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">407</td><td><pre>        $metaPrinterUrl = chr(0x45) // uri type | value-tag
+</pre></td></tr><tr class="covered"><td class="number">408</td><td><pre>          .chr(0x00).chr(0x0B) // name-length
+</pre></td></tr><tr class="covered"><td class="number">409</td><td><pre>          .&#039;printer-uri&#039; // printer-uri | name
+</pre></td></tr><tr class="covered"><td class="number">410</td><td><pre>          .$length.$uri;
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>411</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">412</td><td><pre>        return $metaPrinterUrl;
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>413</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>414</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>415</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>416</td><td><pre>     * @param string $uri
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>417</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>418</td><td><pre>     * @return string
+</pre></td></tr><tr><td class="number"><a name="buildPrinterURI"></a>419</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildJobURI"></a>420</td><td><pre>    protected function buildJobURI($uri)
+</pre></td></tr><tr><td class="number"><a name="buildJobURI"></a>421</td><td><pre>    {
+</pre></td></tr><tr class="notCovered"><td class="number">422</td><td><pre>        $metaJobUrl = chr(0x45) // URI
+</pre></td></tr><tr class="notCovered"><td class="number">423</td><td><pre>        . $this-&gt;getStringLength(&#039;job-uri&#039;)
+</pre></td></tr><tr class="notCovered"><td class="number">424</td><td><pre>        . &#039;job-uri&#039;
+</pre></td></tr><tr class="notCovered"><td class="number">425</td><td><pre>        . $this-&gt;getStringLength($uri)
+</pre></td></tr><tr class="notCovered"><td class="number">426</td><td><pre>        . $uri;
+</pre></td></tr><tr><td class="number"><a name="buildJobURI"></a>427</td><td><pre>
+</pre></td></tr><tr class="notCovered"><td class="number">428</td><td><pre>        return $metaJobUrl;
+</pre></td></tr><tr><td class="number"><a name="buildJobURI"></a>429</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildJobURI"></a>430</td><td><pre>}
+</pre></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="footer">
+			<p>Code coverage report powered by <a href="http://atoum.org">atoum</a></p>
+		</div>
+	</body>
+</html>

@@ -1,16 +1,16 @@
 <?php
 
 
-namespace Smalot\Cups\Connector;
+namespace Smalot\Cups\Manager;
 
 use Smalot\Cups\CupsException;
 
 /**
- * Class ConnectorAbstract
+ * Class ManagerAbstract
  *
- * @package Smalot\Cups\Connector
+ * @package Smalot\Cups\Manager
  */
-class ConnectorAbstract
+class ManagerAbstract
 {
 
     use Traits\CharsetAware;
@@ -39,7 +39,7 @@ class ConnectorAbstract
     protected $printerTags;
 
     /**
-     * ConnectorAbstract constructor.
+     * ManagerAbstract constructor.
      */
     public function __construct()
     {

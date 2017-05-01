@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Language" content="en" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>CupsIpp : code coverage of Smalot\Cups\Manager\Traits\OperationIdAware</title>
+		<link rel="stylesheet" media="screen" type="text/css" href="../../../../screen.css" title="Screen" />
+	</head>
+	<body>
+		<div id="header">
+			<h1>Code coverage of <a href="../../../../index.html">CupsIpp</a>: Smalot\Cups\Manager\Traits\OperationIdAware</h1>
+			<h2>Class code coverage <span>100%</span></h2>
+		</div>
+		<div id="page">
+			<div id="content">
+				<h3>Methods</h3>
+				<ul class="summary">
+					
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 100%"></div>
+										<div class="label">
+											<span class="percent">100%</span>
+											<a href="#getOperationId">getOperationId</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 100%"></div>
+										<div class="label">
+											<span class="percent">100%</span>
+											<a href="#setOperationId">setOperationId</a>
+										</div>
+									</div>
+								
+							</li>
+						
+							<li>
+								
+								
+									<div class="bar">
+										<div class="background"></div>
+										<div class="graph" style="width: 100%"></div>
+										<div class="label">
+											<span class="percent">100%</span>
+											<a href="#buildOperationId">buildOperationId</a>
+										</div>
+									</div>
+								
+							</li>
+						
+					
+				</ul>
+				<h3>Source</h3>
+				<table cellpadding="0" cellspacing="0" class="source">
+					<tr><th class="number">Line</th><th>Code</th></tr>
+					<tr><td class="number"><a name="buildLanguage"></a>1</td><td><pre>&lt;?php
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>2</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>3</td><td><pre>namespace Smalot\Cups\Manager\Traits;
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>4</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>5</td><td><pre>/**
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>6</td><td><pre> * Trait OperationIdAware
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>7</td><td><pre> *
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>8</td><td><pre> * @package Smalot\Cups\Manager\Traits
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>9</td><td><pre> */
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>10</td><td><pre>trait OperationIdAware
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>11</td><td><pre>{
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>12</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>13</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>14</td><td><pre>     * @var int
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>15</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>16</td><td><pre>    protected $operationId;
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>17</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>18</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>19</td><td><pre>     * @param string $type
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>20</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>21</td><td><pre>     * @return int
+</pre></td></tr><tr><td class="number"><a name="buildLanguage"></a>22</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>23</td><td><pre>    public function getOperationId($type = &#039;current&#039;)
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>24</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">25</td><td><pre>        if ($type === &#039;new&#039;) {
+</pre></td></tr><tr class="covered"><td class="number">26</td><td><pre>            $this-&gt;operationId++;
+</pre></td></tr><tr class="covered"><td class="number">27</td><td><pre>        }
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>28</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">29</td><td><pre>        return $this-&gt;operationId;
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>30</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>31</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>32</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>33</td><td><pre>     * @param int $operationId
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>34</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>35</td><td><pre>     * @return OperationIdAware
+</pre></td></tr><tr><td class="number"><a name="getOperationId"></a>36</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>37</td><td><pre>    public function setOperationId($operationId)
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>38</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">39</td><td><pre>        $this-&gt;operationId = $operationId;
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>40</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">41</td><td><pre>        return $this;
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>42</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>43</td><td><pre>
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>44</td><td><pre>    /**
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>45</td><td><pre>     * @param string $type
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>46</td><td><pre>     *
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>47</td><td><pre>     * @return mixed
+</pre></td></tr><tr><td class="number"><a name="setOperationId"></a>48</td><td><pre>     */
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>49</td><td><pre>    protected function buildOperationId($type = &#039;new&#039;)
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>50</td><td><pre>    {
+</pre></td></tr><tr class="covered"><td class="number">51</td><td><pre>        $operationId = $this-&gt;getOperationId($type);
+</pre></td></tr><tr class="covered"><td class="number">52</td><td><pre>        $metaOperationId = $this-&gt;buildInteger($operationId);
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>53</td><td><pre>
+</pre></td></tr><tr class="covered"><td class="number">54</td><td><pre>        return $metaOperationId;
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>55</td><td><pre>    }
+</pre></td></tr><tr><td class="number"><a name="buildOperationId"></a>56</td><td><pre>}
+</pre></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="footer">
+			<p>Code coverage report powered by <a href="http://atoum.org">atoum</a></p>
+		</div>
+	</body>
+</html>

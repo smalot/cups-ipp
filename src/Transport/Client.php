@@ -113,8 +113,6 @@ class Client implements HttpClient
 
                 case self::AUTHTYPE_DIGEST:
                     throw new CupsException('Auth type not supported');
-//                    $authentication = ''self::_BuildDigest();
-//                    break;
 
                 default:
                     throw new CupsException('Unknown auth type');
