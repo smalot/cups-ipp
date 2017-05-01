@@ -62,11 +62,13 @@ class JobManager extends ManagerAbstract
 
         $list = [];
 
-        foreach ($values['job-attributes'] as $values) {
-            $job = new Job();
-            $this->fillAttributes($job, $values);
+        if (!empty($values['job-attributes'])) {
+            foreach ($values['job-attributes'] as $values) {
+                $job = new Job();
+                $this->fillAttributes($job, $values);
 
-            $list[] = $job;
+                $list[] = $job;
+            }
         }
 
         return $list;

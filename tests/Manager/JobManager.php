@@ -40,6 +40,6 @@ class JobManager extends atoum\test
         $printers = $jobManager->getList($printerUri);
 
         $this->array($printers);
-        
+
     }
 }
