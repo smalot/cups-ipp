@@ -101,6 +101,33 @@ class Job extends ConnectorAbstract
 
     /**
      * @param string $uri
+     * @param string $until
+     *
+     * @return \Smalot\Cups\Transport\Response
+     */
+    public function hold($uri, $until = 'indefinite')
+    {
+        $request = $this->prepareHoldRequest($uri, $until);
+        $response = $this->client->sendRequest($request);
+
+        return CupsResponse::parseResponse($response);
+    }
+
+    /**
+     * @param string $uri
+     *
+     * @return \Smalot\Cups\Transport\Response
+     */
+    public function restart($uri)
+    {
+        $request = $this->prepareRestartRequest($uri);
+        $response = $this->client->sendRequest($request);
+
+        return CupsResponse::parseResponse($response);
+    }
+
+    /**
+     * @param string $uri
      * @param bool $myJobs
      * @param int $limit
      * @param string $whichJobs
@@ -328,6 +355,92 @@ class Job extends ConnectorAbstract
 
         $content = chr(0x01).chr(0x01) // 1.1  | version-number
           .chr(0x00).chr(0x0d) // release-Job | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$jobUri
+          .$username
+          .$message
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
+
+        $headers = ['Content-Type' => 'application/ipp'];
+
+        return new Request('POST', '/jobs/', $headers, $content);
+    }
+
+    /**
+     * @param string $uri
+     * @param string $until
+     *
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function prepareHoldRequest($uri, $until = 'indefinite')
+    {
+        $charset = $this->buildCharset();
+        $language = $this->buildLanguage();
+        $operationId = $this->buildOperationId();
+        $username = $this->buildUsername();
+        $jobUri = $this->buildJobURI($uri);
+
+        // Needs a build function call.
+        $message = '';
+
+        $untilStrings = [
+          'no-hold',
+          'day-time',
+          'evening',
+          'night',
+          'weekend',
+          'second-shift',
+          'third-shift',
+        ];
+
+        if (!in_array($until, $untilStrings)) {
+            $until = 'indefinite';
+        }
+
+        $holdUntil = chr(0x42) // keyword
+          .$this->getStringLength('job-hold-until')
+          .'job-hold-until'
+          .$this->getStringLength($until)
+          .$until;
+
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x0C) // hold-Job | operation-id
+          .$operationId //           request-id
+          .chr(0x01) // start operation-attributes | operation-attributes-tag
+          .$charset
+          .$language
+          .$username
+          .$jobUri
+          .$message
+          .$holdUntil
+          .chr(0x03); // end-of-attributes | end-of-attributes-tag
+
+        $headers = ['Content-Type' => 'application/ipp'];
+
+        return new Request('POST', '/jobs/', $headers, $content);
+    }
+
+    /**
+     * @param string $uri
+     *
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function prepareRestartRequest($uri)
+    {
+        $charset = $this->buildCharset();
+        $language = $this->buildLanguage();
+        $operationId = $this->buildOperationId();
+        $username = $this->buildUsername();
+        $jobUri = $this->buildJobURI($uri);
+
+        // Needs a build function call.
+        $message = '';
+
+        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+          .chr(0x00).chr(0x0E) // release-Job | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
