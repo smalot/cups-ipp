@@ -1,5 +1,5 @@
 /vendor/
 /.idea/
 /tmp
-/test*
+/test*.php
 composer.lock
