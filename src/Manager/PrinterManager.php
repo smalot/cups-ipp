@@ -4,6 +4,7 @@ namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
 use Smalot\Cups\Model\Printer;
+use Smalot\Cups\Model\PrinterInterface;
 use Smalot\Cups\Transport\Response as CupsResponse;
 use GuzzleHttp\Psr7\Request;
 
@@ -66,20 +67,26 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\Printer $printer
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return \Smalot\Cups\Model\Printer
      */
-    public function getAttributes($uri)
+    public function loadAttributes($printer)
     {
-        $request = $this->prepareGetAttributesRequest($uri);
+        $request = $this->prepareLoadAttributesRequest($printer->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
+        $values = $result->getValues();
 
-        return CupsResponse::parseResponse($response);
+        if (isset($values['printer-attributes'][0])) {
+            $this->fillAttributes($printer, $values['printer-attributes'][0]);
+        }
+
+        return $printer;
     }
 
     /**
-     * @return \Smalot\Cups\Transport\Response
+     * @return \Smalot\Cups\Model\Printer
      */
     public function getDefault()
     {
@@ -90,42 +97,63 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\Printer $printer
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
      */
-    public function pause($uri)
+    public function pause(Printer $printer)
     {
-        $request = $this->preparePauseRequest($uri);
+        $request = $this->preparePauseRequest($printer->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        // Reload attributes to update printer status.
+        $this->loadAttributes($printer);
+
+        if ($result->getStatusCode() == 'successfull-ok') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\Printer $printer
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
      */
-    public function resume($uri)
+    public function resume(Printer $printer)
     {
-        $request = $this->prepareResumeRequest($uri);
+        $request = $this->prepareResumeRequest($printer->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        // Reload attributes to update printer status.
+        $this->loadAttributes($printer);
+
+        if ($result->getStatusCode() == 'successfull-ok') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\Printer $printer
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return bool
      */
-    public function purge($uri)
+    public function purge(Printer $printer)
     {
-        $request = $this->preparePurgeRequest($uri);
+        $request = $this->preparePurgeRequest($printer->getUri());
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
 
-        return CupsResponse::parseResponse($response);
+        if ($result->getStatusCode() == 'successfull-ok') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -159,7 +187,7 @@ class PrinterManager extends ManagerAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareGetAttributesRequest($uri)
+    protected function prepareLoadAttributesRequest($uri)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
@@ -347,5 +375,27 @@ class PrinterManager extends ManagerAbstract
         }
 
         return $metaAttributes;
+    }
+
+    /**
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
+     * @param $item
+     *
+     * @return \Smalot\Cups\Model\PrinterInterface
+     */
+    protected function fillAttributes(PrinterInterface $printer, $item)
+    {
+        $printer->setUri($item['printer-uri-supported'][0]);
+        $printer->setName($item['printer-name'][0]);
+        $printer->setStatus($item['printer-state'][0]);
+
+        // Merge with attributes already set.
+        $attributes = $printer->getAttributes();
+        foreach ($item as $name => $value) {
+            $attributes[$name] = $value;
+        }
+        $printer->setAttributes($attributes);
+
+        return $printer;
     }
 }

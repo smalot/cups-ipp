@@ -3,6 +3,8 @@
 namespace Smalot\Cups\Tests\Units\Manager;
 
 use mageekguy\atoum;
+use Smalot\Cups\Model\Printer;
+use Smalot\Cups\Model\PrinterInterface;
 use Smalot\Cups\Transport\Client;
 
 /**
@@ -13,8 +15,6 @@ use Smalot\Cups\Transport\Client;
 class PrinterManager extends atoum\test
 {
     protected $printerUri = 'ipp://localhost:631/printers/PDF';
-
-
 
     public function testPrinterManager()
     {
@@ -57,10 +57,9 @@ class PrinterManager extends atoum\test
         }
 
         $this->boolean($found)->isEqualTo(true);
-
     }
 
-    public function testPause()
+    public function testPauseResume()
     {
         $user = getenv('USER');
         $password = getenv('PASS');
@@ -68,7 +67,23 @@ class PrinterManager extends atoum\test
         $client = Client::create();
         $client->setAuthentication($user, $password);
 
+        $printer = new Printer();
+        $printer->setUri($this->printerUri);
+
         $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
-        $printerManager->pause($this->printerUri);
+        $printerManager->loadAttributes($printer);
+
+        // Reset status
+        $printerManager->resume($printer);
+
+        // Pause printer and check status
+        $done = $printerManager->pause($printer);
+        $this->boolean($done)->isEqualTo(true);
+        $this->string($printer->getStatus())->isEqualTo('stopped');
+
+        // Reset status and check status
+        $done = $printerManager->resume($printer);
+        $this->boolean($done)->isEqualTo(true);
+        $this->string($printer->getStatus())->isEqualTo('idle');
     }
 }
