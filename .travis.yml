@@ -26,4 +26,7 @@ before_script:
   - composer update
   - composer --prefer-source --dev update
 
-script: ./vendor/bin/atoum -d tests/ -ncc
+script:
+  - sudo apt-get remove -yqq cups-pdf
+  - sudo apt-get install -yqq cups-pdf
+  - ./vendor/bin/atoum -d tests/ -ncc
