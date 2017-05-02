@@ -2,7 +2,6 @@ language: php
 dist: trusty
 
 php:
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
@@ -13,14 +12,16 @@ env:
     - PASS=travis
 
 matrix:
-  allow_failures:
-    - php: 5.5
+#  allow_failures:
+#    - php: 5.5
 
 before_script:
+  # Prepare CUPS
   - sudo apt-get install -yqq cups cups-pdf
   - echo "travis:travis" | sudo chpasswd
   - sudo adduser travis lpadmin
   - sudo service cups restart
+  # Prepare Composer
   - composer self-update || true
   - composer update
   - composer --prefer-source --dev update
