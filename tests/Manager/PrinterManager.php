@@ -40,7 +40,7 @@ class PrinterManager extends atoum\test
         $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
         $printers = $printerManager->getList();
 
-        $this->array($printers)->size->isGreaterThan(1);
+        $this->array($printers)->size->isGreaterThanOrEqualTo(1);
 
         $found = false;
         foreach ($printers as $printer) {

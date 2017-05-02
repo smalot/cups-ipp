@@ -1,4 +1,5 @@
 language: php
+dist: trusty
 
 php:
   - 5.5
@@ -12,8 +13,9 @@ matrix:
 
 before_script:
   - sudo apt-get install -yqq cups cups-pdf
+  - sudo passwd travis travis
   - composer self-update || true
   - composer update
   - composer --prefer-source --dev update
 
-script: ./vendor/bin/atoum -d tests/ -ncc
+script: sudo ./vendor/bin/atoum -d tests/ -ncc
