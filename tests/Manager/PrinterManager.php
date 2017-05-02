@@ -66,12 +66,10 @@ class PrinterManager extends atoum\test
 
         $client = Client::create();
         $client->setAuthentication($user, $password);
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
 
         $printer = new Printer();
         $printer->setUri($this->printerUri);
-
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
-        $printerManager->loadAttributes($printer);
 
         // Reset status
         $printerManager->resume($printer);
@@ -84,6 +82,34 @@ class PrinterManager extends atoum\test
         // Reset status and check status
         $done = $printerManager->resume($printer);
         $this->boolean($done)->isEqualTo(true);
+        $this->string($printer->getStatus())->isEqualTo('idle');
+    }
+
+    public function testPurge()
+    {
+        $user = getenv('USER');
+        $password = getenv('PASS');
+
+        $client = Client::create();
+        $client->setAuthentication($user, $password);
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
+
+        $printer = new Printer();
+        $printer->setUri($this->printerUri);
+
+        // Reset status
+        $done = $printerManager->purge($printer);
+        $this->boolean($done)->isEqualTo(true);
+    }
+
+    public function testGetDefault()
+    {
+        $client = Client::create();
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
+
+        // Reset status
+        $printer = $printerManager->getDefault();
+        $this->object($printer)->isInstanceOf('\Smalot\Cups\Model\Printer');
         $this->string($printer->getStatus())->isEqualTo('idle');
     }
 }

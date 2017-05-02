@@ -54,10 +54,7 @@ class PrinterManager extends ManagerAbstract
         if (!empty($values['printer-attributes'])) {
             foreach ($values['printer-attributes'] as $item) {
                 $printer = new Printer();
-                $printer->setUri($item['printer-uri-supported'][0]);
-                $printer->setName($item['printer-name'][0]);
-                $printer->setStatus($item['printer-state'][0]);
-                $printer->setAttributes($item);
+                $this->fillAttributes($printer, $item);
 
                 $list[] = $printer;
             }
@@ -86,14 +83,23 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @return \Smalot\Cups\Model\Printer
+     * @return \Smalot\Cups\Model\Printer|null
      */
     public function getDefault()
     {
-        $request = $this->prepareGetDefaultRequest();
+        $request = $this->prepareGetDefaultRequest(['all']);
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
+        $values = $result->getValues();
 
-        return CupsResponse::parseResponse($response);
+        $printer = null;
+
+        if (isset($values['printer-attributes'][0])) {
+            $printer = new Printer();
+            $this->fillAttributes($printer, $values['printer-attributes'][0]);
+        }
+
+        return $printer;
     }
 
     /**
