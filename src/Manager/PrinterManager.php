@@ -116,11 +116,7 @@ class PrinterManager extends ManagerAbstract
         // Reload attributes to update printer status.
         $this->loadAttributes($printer);
 
-        if ($result->getStatusCode() == 'successfull-ok') {
-            return true;
-        } else {
-            return false;
-        }
+        return ($result->getStatusCode() == 'successfull-ok');
     }
 
     /**
@@ -137,11 +133,7 @@ class PrinterManager extends ManagerAbstract
         // Reload attributes to update printer status.
         $this->loadAttributes($printer);
 
-        if ($result->getStatusCode() == 'successfull-ok') {
-            return true;
-        } else {
-            return false;
-        }
+        return ($result->getStatusCode() == 'successfull-ok');
     }
 
     /**
@@ -155,11 +147,7 @@ class PrinterManager extends ManagerAbstract
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
-        if ($result->getStatusCode() == 'successfull-ok') {
-            return true;
-        } else {
-            return false;
-        }
+        return ($result->getStatusCode() == 'successfull-ok');
     }
 
     /**
