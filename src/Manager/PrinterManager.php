@@ -3,6 +3,7 @@
 namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
+use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Transport\Response as CupsResponse;
 use GuzzleHttp\Psr7\Request;
 
@@ -39,14 +40,29 @@ class PrinterManager extends ManagerAbstract
     /**
      * @param array $attributes
      *
-     * @return \Smalot\Cups\Transport\Response
+     * @return \Smalot\Cups\Model\Printer[]
      */
     public function getList($attributes = [])
     {
         $request = $this->prepareGetListRequest($attributes);
         $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
+        $values = $result->getValues();
+        $list = [];
 
-        return CupsResponse::parseResponse($response);
+        if (!empty($values['printer-attributes'])) {
+            foreach ($values['printer-attributes'] as $item) {
+                $printer = new Printer();
+                $printer->setUri($item['printer-uri-supported'][0]);
+                $printer->setName($item['printer-name'][0]);
+                $printer->setStatus($item['printer-state'][0]);
+                $printer->setAttributes($item);
+
+                $list[] = $printer;
+            }
+        }
+
+        return $list;
     }
 
     /**
@@ -293,10 +309,11 @@ class PrinterManager extends ManagerAbstract
     {
         return [
           'printer-uri-supported',
+          'printer-name',
+          'printer-state',
           'printer-location',
           'printer-info',
           'printer-type',
-          'color-supported',
           'printer-icons',
         ];
     }
