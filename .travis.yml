@@ -13,7 +13,7 @@ matrix:
 
 before_script:
   - sudo apt-get install -yqq cups cups-pdf
-  - sudo passwd travis travis
+  - sudo chpasswd travis:travis
   - composer self-update || true
   - composer update
   - composer --prefer-source --dev update
