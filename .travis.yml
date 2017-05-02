@@ -7,6 +7,11 @@ php:
   - 7.0
   - 7.1
 
+env:
+  global:
+    - USER=travis
+    - PASS=travis
+
 matrix:
   allow_failures:
     - php: 5.5
@@ -14,6 +19,8 @@ matrix:
 before_script:
   - sudo apt-get install -yqq cups cups-pdf
   - echo "travis:travis" | sudo chpasswd
+  - sudo adduser travis lpadmin
+  - sudo service cups restart
   - composer self-update || true
   - composer update
   - composer --prefer-source --dev update

@@ -14,6 +14,8 @@ class PrinterManager extends atoum\test
 {
     protected $printerUri = 'ipp://localhost:631/printers/PDF';
 
+
+
     public function testPrinterManager()
     {
         $client = Client::create();
@@ -46,20 +48,25 @@ class PrinterManager extends atoum\test
         foreach ($printers as $printer) {
             if ($printer->getName() == 'PDF') {
                 $found = true;
+
+                $this->string($printer->getName())->isEqualTo('PDF');
+                $this->string($printer->getUri())->isEqualTo($this->printerUri);
+                $this->string($printer->getStatus())->isEqualTo('idle');
                 break;
             }
         }
 
         $this->boolean($found)->isEqualTo(true);
-        $this->string($printer->getName())->isEqualTo('PDF');
-        $this->string($printer->getUri())->isEqualTo($this->printerUri);
-        $this->string($printer->getStatus())->isEqualTo('idle');
+
     }
 
     public function testPause()
     {
+        $user = getenv('USER');
+        $password = getenv('PASS');
+
         $client = Client::create();
-        $client->setAuthentication('travis', 'travis');
+        $client->setAuthentication($user, $password);
 
         $printerManager = new \Smalot\Cups\Manager\PrinterManager($client);
         $printerManager->pause($this->printerUri);
