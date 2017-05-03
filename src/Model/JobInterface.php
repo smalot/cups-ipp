@@ -17,7 +17,7 @@ interface JobInterface
     /**
      * @param int $id
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setId($id);
 
@@ -29,7 +29,7 @@ interface JobInterface
     /**
      * @param string $uri
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setUri($uri);
 
@@ -41,7 +41,7 @@ interface JobInterface
     /**
      * @param string $printerUri
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setPrinterUri($printerUri);
 
@@ -53,7 +53,7 @@ interface JobInterface
     /**
      * @param string $name
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setName($name);
 
@@ -65,7 +65,7 @@ interface JobInterface
     /**
      * @param string $username
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setUsername($username);
 
@@ -77,7 +77,7 @@ interface JobInterface
     /**
      * @param string $pageRanges
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setPageRanges($pageRanges);
 
@@ -89,7 +89,7 @@ interface JobInterface
     /**
      * @param int $copies
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setCopies($copies);
 
@@ -101,9 +101,21 @@ interface JobInterface
     /**
      * @param int $sides
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setSides($sides);
+
+    /**
+     * @return int
+     */
+    public function getFidelity();
+
+    /**
+     * @param int $fidelity
+     *
+     * @return JobInterface
+     */
+    public function setFidelity($fidelity);
 
     /**
      * @return array
@@ -115,7 +127,7 @@ interface JobInterface
      * @param string $mimetype
      * @param string $name
      *
-     * @return Job
+     * @return JobInterface
      */
     public function addFile($filename, $mimetype = 'application/octet-stream', $name = '');
 
@@ -123,7 +135,7 @@ interface JobInterface
      * @param string $text
      * @param string $name
      *
-     * @return Job
+     * @return JobInterface
      */
     public function addText($text, $name = '');
 
@@ -135,7 +147,7 @@ interface JobInterface
     /**
      * @param array $attributes
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setAttributes($attributes);
 
@@ -147,7 +159,7 @@ interface JobInterface
     /**
      * @param string $state
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setState($state);
 
@@ -159,7 +171,7 @@ interface JobInterface
     /**
      * @param string $stateReason
      *
-     * @return Job
+     * @return JobInterface
      */
     public function setStateReason($stateReason);
 }

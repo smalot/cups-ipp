@@ -68,9 +68,9 @@ class PrinterManager extends ManagerAbstract
      *
      * @return \Smalot\Cups\Model\Printer
      */
-    public function loadAttributes($printer)
+    public function reloadAttributes($printer)
     {
-        $request = $this->prepareLoadAttributesRequest($printer->getUri());
+        $request = $this->prepareReloadAttributesRequest($printer->getUri());
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
         $values = $result->getValues();
@@ -114,7 +114,7 @@ class PrinterManager extends ManagerAbstract
         $result = CupsResponse::parseResponse($response);
 
         // Reload attributes to update printer status.
-        $this->loadAttributes($printer);
+        $this->reloadAttributes($printer);
 
         return ($result->getStatusCode() == 'successfull-ok');
     }
@@ -131,7 +131,7 @@ class PrinterManager extends ManagerAbstract
         $result = CupsResponse::parseResponse($response);
 
         // Reload attributes to update printer status.
-        $this->loadAttributes($printer);
+        $this->reloadAttributes($printer);
 
         return ($result->getStatusCode() == 'successfull-ok');
     }
@@ -181,7 +181,7 @@ class PrinterManager extends ManagerAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareLoadAttributesRequest($uri)
+    protected function prepareReloadAttributesRequest($uri)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();

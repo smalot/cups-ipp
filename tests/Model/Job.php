@@ -23,6 +23,7 @@ class Job extends atoum\test
         $job->setSides(2);
         $job->setCopies(3);
         $job->setPageRanges('1-2,4-6');
+        $job->setFidelity(1);
         $job->setState('idle');
         $job->setStateReason('Not working');
         $job->setAttributes(['job-id' => 8]);
@@ -38,6 +39,7 @@ class Job extends atoum\test
         $this->integer($job->getSides())->isEqualTo(2);
         $this->integer($job->getCopies())->isEqualTo(3);
         $this->string($job->getPageRanges())->isEqualTo('1-2,4-6');
+        $this->integer($job->getFidelity())->isEqualTo(1);
         $this->string($job->getState())->isEqualTo('idle');
         $this->string($job->getStateReason())->isEqualTo('Not working');
         $this->array($job->getAttributes())->isEqualTo(['job-id' => 8]);

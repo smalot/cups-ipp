@@ -3,6 +3,8 @@
 namespace Smalot\Cups\Tests\Units\Manager;
 
 use mageekguy\atoum;
+use Smalot\Cups\Model\Job;
+use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Transport\Client;
 
 /**
@@ -31,15 +33,60 @@ class JobManager extends atoum\test
         $this->integer($jobManager->getOperationId('new'))->isEqualTo(6);
     }
 
-    public function testGetList()
+    public function testGetListEmpty()
     {
-        $client = Client::create();
         $printerUri = 'ipp://localhost:631/printers/PDF';
 
+        $client = Client::create();
+
+        $printer = new Printer();
+        $printer->setUri($printerUri);
+
         $jobManager = new \Smalot\Cups\Manager\JobManager($client);
-        $printers = $jobManager->getList($printerUri);
+        $jobs = $jobManager->getList($printer, false);
 
-        $this->array($printers);
+        $this->array($jobs)->isEmpty();
+    }
 
+    public function testCreateJob()
+    {
+        $user = getenv('USER');
+        $printerUri = 'ipp://localhost:631/printers/PDF';
+
+        $client = Client::create();
+
+        $printer = new Printer();
+        $printer->setUri($printerUri);
+
+        $jobManager = new \Smalot\Cups\Manager\JobManager($client);
+        $jobs = $jobManager->getList($printer, false);
+        $this->array($jobs)->isEmpty();
+
+        // Create new Job.
+        $job = new Job();
+        $job->setName('Job create test');
+        $job->setUsername($user);
+        $job->setCopies(1);
+        $job->setPageRanges('1');
+        $job->addText('hello world', 'hello');
+        $jobManager->create($job);
+
+        $jobs = $jobManager->getList($printer, false);
+        $this->array($jobs)->isNotEmpty();
+    }
+
+    public function testGetList()
+    {
+        $printerUri = 'ipp://localhost:631/printers/PDF';
+
+        $client = Client::create();
+
+        $printer = new Printer();
+        $printer->setUri($printerUri);
+
+        $jobManager = new \Smalot\Cups\Manager\JobManager($client);
+        $jobs = $jobManager->getList($printer, false);
+
+        $this->array($jobs)->isEmpty();
     }
 }

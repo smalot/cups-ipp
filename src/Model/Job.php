@@ -55,6 +55,11 @@ class Job implements JobInterface
     protected $sides;
 
     /**
+     * @var int
+     */
+    protected $fidelity;
+
+    /**
      * @var array
      */
     protected $content = [];
@@ -230,6 +235,26 @@ class Job implements JobInterface
     public function setSides($sides)
     {
         $this->sides = $sides;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFidelity()
+    {
+        return $this->fidelity;
+    }
+
+    /**
+     * @param int $fidelity
+     *
+     * @return Job
+     */
+    public function setFidelity($fidelity)
+    {
+        $this->fidelity = $fidelity;
 
         return $this;
     }

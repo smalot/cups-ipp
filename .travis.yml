@@ -16,17 +16,19 @@ matrix:
 #    - php: 5.5
 
 before_script:
-  # Prepare CUPS
-  - sudo apt-get install -yqq cups cups-pdf
   - echo "travis:travis" | sudo chpasswd
-  - sudo adduser travis lpadmin
-  - sudo service cups restart
   # Prepare Composer
   - composer self-update || true
   - composer update
   - composer --prefer-source --dev update
 
 script:
-  - sudo apt-get remove -yqq cups-pdf
-  - sudo apt-get install -yqq cups-pdf
+  # Reset CUPS and PDF Printer
+  - sudo apt-get remove -yqq cups cups-pdf
+  - sudo apt-get install -yqq cups cups-pdf
+  - sudo adduser travis lpadmin
+  - sudo service cups restart
+  # Test PDF Printer
+  - lp -d PDF LICENSE && sleep 10
+  # Run Tests
   - ./vendor/bin/atoum -d tests/ -ncc
