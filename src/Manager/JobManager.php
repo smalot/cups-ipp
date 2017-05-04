@@ -119,7 +119,7 @@ class JobManager extends ManagerAbstract
             $job = $this->fillAttributes($job, $values['job-attributes'][0]);
             $job->setPrinterUri($printer->getUri());
 
-            $success = true;
+            $success = (count($job->getContent()) > 0);
 
             // Send parts.
             foreach ($job->getContent() as $part) {

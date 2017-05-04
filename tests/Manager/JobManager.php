@@ -64,12 +64,19 @@ class JobManager extends atoum\test
 
         // Create new Job.
         $job = new Job();
+        $job->setId(0);
         $job->setName('Job create test');
         $job->setUsername($user);
         $job->setCopies(1);
         $job->setPageRanges('1');
         $job->addText('hello world', 'hello');
-        $jobManager->create($job);
+        $result = $jobManager->create($printer, $job);
+
+        $this->boolean($result)->isTrue();
+        $this->integer($job->getId())->isGreaterThan(0);
+        $this->string($job->getState())->isEqualTo('completed');
+        $this->string($job->getPrinterUri())->isEqualTo($printer->getUri());
+        $this->string($job->getPrinterUri())->isEqualTo($printerUri);
 
         $jobs = $jobManager->getList($printer, false);
         $this->array($jobs)->isNotEmpty();
