@@ -40,16 +40,16 @@ trait UsernameAware
      *
      * @return string
      */
-    protected function buildUsername($username = 'PHP-SERVER')
+    protected function buildUsername($username = '')
     {
-        if ($username != 'PHP-SERVER') {
+        $metaUsername = '';
+
+        if ($username) {
             $metaUsername = chr(0x42) // keyword type || value-tag
               .chr(0x00).chr(0x14) // name-length
               .'requesting-user-name'
               .$this->builder->formatStringLength($username) // value-length
               .$username;
-        } else {
-            $metaUsername = '';
         }
 
         return $metaUsername;

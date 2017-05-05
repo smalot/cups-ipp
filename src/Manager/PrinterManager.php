@@ -18,29 +18,6 @@ class PrinterManager extends ManagerAbstract
 {
 
     /**
-     * @var \Http\Client\HttpClient
-     */
-    protected $client;
-
-    /**
-     * Printer constructor.
-     *
-     * @param \Smalot\Cups\Builder\Builder $builder
-     * @param \Http\Client\HttpClient $client
-     */
-    public function __construct(Builder $builder, HttpClient $client)
-    {
-        parent::__construct($builder);
-
-        $this->client = $client;
-
-        $this->setCharset('us-ascii');
-        $this->setLanguage('en-us');
-        $this->setOperationId(0);
-        $this->setUsername('');
-    }
-
-    /**
      * @param string $uri
      *
      * @return \Smalot\Cups\Model\Printer|false

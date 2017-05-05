@@ -139,7 +139,11 @@ class Builder
     {
         $integers = preg_split('/[:-]/', $range);
 
-        return $this->formatInteger($integers[0]).$this->formatInteger($integers[1]);
+        if (count($integers) == 1) {
+            return $this->formatInteger($integers[0]).$this->formatInteger($integers[0]);
+        } else {
+            return $this->formatInteger($integers[0]).$this->formatInteger($integers[1]);
+        }
     }
 
     /**
@@ -225,6 +229,7 @@ class Builder
                     break;
 
                 case 'uri':
+                case 'keyword':
                 case 'string':
                     // Nothing to do.
                     break;
@@ -237,7 +242,7 @@ class Builder
                 case 'extended':
                 case 'octet_string':
                 default:
-                    throw new CupsException('Property type not supported.');
+                    throw new CupsException('Property type not supported: "'.$type.'".');
             }
 
             $build = $tag
@@ -264,7 +269,7 @@ class Builder
             }
         }
 
-        throw new CupsException('Property not found');
+        throw new CupsException('Property not found: "'.$name.'".');
     }
 
     /**

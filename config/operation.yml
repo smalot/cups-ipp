@@ -8,3 +8,13 @@ job-impressions:
     tag: 'integer'
 job-media-sheets:
     tag: 'integer'
+requested-attributes:
+    tag: 'keyword'
+my-jobs:
+    tag: 'boolean'
+limit:
+    tag: 'integer'
+completed:
+    tag: 'keyword'
+which-jobs:
+    tag: 'keyword'

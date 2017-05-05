@@ -3,6 +3,7 @@
 namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
+use Smalot\Cups\Builder\Builder;
 use Smalot\Cups\CupsException;
 use Smalot\Cups\Model\Job;
 use Smalot\Cups\Model\JobInterface;
@@ -17,28 +18,6 @@ use GuzzleHttp\Psr7\Request;
  */
 class JobManager extends ManagerAbstract
 {
-
-    /**
-     * @var \Http\Client\HttpClient
-     */
-    protected $client;
-
-    /**
-     * Printer constructor.
-     *
-     * @param \Http\Client\HttpClient $client
-     */
-    public function __construct(HttpClient $client)
-    {
-        parent::__construct();
-
-        $this->client = $client;
-
-        $this->setCharset('us-ascii');
-        $this->setLanguage('en-us');
-        $this->setOperationId(0);
-        $this->setUsername('');
-    }
 
     /**
      * @param \Smalot\Cups\Model\PrinterInterface $printer
@@ -134,15 +113,6 @@ class JobManager extends ManagerAbstract
                     $success = false;
                     break;
                 }
-            }
-
-            // Commit job.
-            if ($success) {
-                //                $request = $this->prepareCreateRequest($job->getUri());
-                //                $response = $this->client->sendRequest($request);
-                //                $result = CupsResponse::parseResponse($response);
-            } else {
-                // Cancel
             }
         }
 
@@ -264,51 +234,29 @@ class JobManager extends ManagerAbstract
       $whichJobs = 'not-completed',
       $subset = false
     ) {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
-        $username = $this->buildUsername();
-        $printerUri = $this->buildPrinterURI($uri);
+        $username = $this->buildUsername('sebastien');
 
-        if ($limit) {
-            $limit = $this->buildInteger($limit);
-            $metaLimit = chr(0x21) // integer
-              .$this->getStringLength('limit')
-              .'limit'
-              .$this->getStringLength($limit)
-              .$limit;
-        } else {
-            $metaLimit = '';
-        }
+        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $metaLimit = $this->buildProperty('limit', $limit, true);
+        $metaMyJobs = $this->buildProperty('my-jobs', $myJobs, true);
 
         if ($whichJobs == 'completed') {
-            $metaWhichJobs = chr(0x44) // keyword
-              .$this->getStringLength('which-jobs')
-              .'which-jobs'
-              .$this->getStringLength($whichJobs)
-              .$whichJobs;
+            $metaWhichJobs = $this->buildProperty('which-jobs', $whichJobs, true);
         } else {
             $metaWhichJobs = '';
         }
 
-        if ($myJobs) {
-            $metaMyJobs = chr(0x22) // boolean
-              .$this->getStringLength('my-jobs')
-              .'my-jobs'
-              .$this->getStringLength(chr(0x01))
-              .chr(0x01);
-        } else {
-            $metaMyJobs = '';
-        }
-
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x0A) // Get-Jobs | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$printerUri
           .$username
+          .$printerUri
           .$metaLimit
           .$metaWhichJobs
           .$metaMyJobs;
@@ -316,32 +264,27 @@ class JobManager extends ManagerAbstract
         if ($subset) {
             $content .=
               chr(0x44) // keyword
-              .$this->getStringLength('requested-attributes')
+              .$this->builder->formatStringLength('requested-attributes')
               .'requested-attributes'
-              .$this->getStringLength('job-uri')
+              .$this->builder->formatStringLength('job-uri')
               .'job-uri'
               .chr(0x44) // keyword
-              .$this->getStringLength('')
+              .$this->builder->formatStringLength('')
               .''
-              .$this->getStringLength('job-name')
+              .$this->builder->formatStringLength('job-name')
               .'job-name'
               .chr(0x44) // keyword
-              .$this->getStringLength('')
+              .$this->builder->formatStringLength('')
               .''
-              .$this->getStringLength('job-state')
+              .$this->builder->formatStringLength('job-state')
               .'job-state'
               .chr(0x44) // keyword
-              .$this->getStringLength('')
+              .$this->builder->formatStringLength('')
               .''
-              .$this->getStringLength('job-state-reason')
+              .$this->builder->formatStringLength('job-state-reason')
               .'job-state-reason';
         } else { # cups 1.4.4 doesn't return much of anything without this
-            $content .=
-              chr(0x44) // keyword
-              .$this->getStringLength('requested-attributes')
-              .'requested-attributes'
-              .$this->getStringLength('all')
-              .'all';
+            $content .= $this->buildProperty('requested-attributes', 'all');
         }
 
         $content .= chr(0x03); // end-of-attributes | end-of-attributes-tag
@@ -364,9 +307,9 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildJobURI($uri);
+        $jobUri = $this->buildProperty('job-uri', $uri);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x09) // Get-Job-Attributes | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -378,24 +321,24 @@ class JobManager extends ManagerAbstract
         if ($subset) {
             $content .=
               chr(0x44) // keyword
-              .$this->getStringLength('requested-attributes')
+              .$this->builder->formatStringLength('requested-attributes')
               .'requested-attributes'
-              .$this->getStringLength('job-uri')
+              .$this->builder->formatStringLength('job-uri')
               .'job-uri'
               .chr(0x44) // keyword
-              .$this->getStringLength('')
+              .$this->builder->formatStringLength('')
               .''
-              .$this->getStringLength('job-name')
+              .$this->builder->formatStringLength('job-name')
               .'job-name'
               .chr(0x44) // keyword
-              .$this->getStringLength('')
+              .$this->builder->formatStringLength('')
               .''
-              .$this->getStringLength('job-state')
+              .$this->builder->formatStringLength('job-state')
               .'job-state'
               .chr(0x44) // keyword
-              .$this->getStringLength('')
+              .$this->builder->formatStringLength('')
               .''
-              .$this->getStringLength('job-state-reason')
+              .$this->builder->formatStringLength('job-state-reason')
               .'job-state-reason';
         } elseif ($attributesGroup) {
             switch ($attributesGroup) {
@@ -413,9 +356,9 @@ class JobManager extends ManagerAbstract
 
             $content .=
               chr(0x44) // keyword
-              .$this->getStringLength('requested-attributes')
+              .$this->builder->formatStringLength('requested-attributes')
               .'requested-attributes'
-              .$this->getStringLength($attributesGroup)
+              .$this->builder->formatStringLength($attributesGroup)
               .$attributesGroup;
         }
         $content .= chr(0x03); // end-of-attributes | end-of-attributes-tag
@@ -447,7 +390,7 @@ class JobManager extends ManagerAbstract
 
         $deletedAttributes = '';
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x14) // Set-Job-Attributes | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -481,7 +424,7 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername($job->getUsername());
-        $printerUri = $this->buildPrinterURI($uri);
+        $printerUri = $this->buildProperty('printer-uri', $uri);
         $jobName = $this->buildJobName($job->getName());
         $fidelity = $this->buildFidelity($job->getFidelity());
         $timeoutAttribute = $this->buildTimeout($timeout);
@@ -493,7 +436,7 @@ class JobManager extends ManagerAbstract
         $operationAttributes = '';//$this->buildOperationAttributes();
         $jobAttributes = $this->buildJobAttributes($job->getAttributes());
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x05) // Create-Job | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -528,13 +471,13 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildJobURI($uri);
+        $jobUri = $this->buildProperty('job-uri', $uri);
 
         // Needs a build function call.
         $requestBodyMalformed = '';
         $message = '';
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x08) // cancel-Job | operation-id
           .$operationId //           request-id
           .$requestBodyMalformed
@@ -562,12 +505,12 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildJobURI($uri);
+        $jobUri = $this->buildProperty('job-uri', $uri);
 
         // Needs a build function call.
         $message = '';
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x0d) // release-Job | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -595,7 +538,7 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildJobURI($uri);
+        $jobUri = $this->buildProperty('job-uri', $uri);
 
         // Needs a build function call.
         $message = '';
@@ -615,12 +558,12 @@ class JobManager extends ManagerAbstract
         }
 
         $holdUntil = chr(0x42) // keyword
-          .$this->getStringLength('job-hold-until')
+          .$this->builder->formatStringLength('job-hold-until')
           .'job-hold-until'
-          .$this->getStringLength($until)
+          .$this->builder->formatStringLength($until)
           .$until;
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x0C) // hold-Job | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -648,12 +591,12 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildJobURI($uri);
+        $jobUri = $this->buildProperty('job-uri', $uri);
 
         // Needs a build function call.
         $message = '';
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x0E) // release-Job | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -681,15 +624,16 @@ class JobManager extends ManagerAbstract
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
-        $jobUri = $this->buildJobURI($job->getUri());
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
         $username = $this->buildUsername($job->getUsername());
         $documentName = $this->buildDocumentName($part['name']);
         $fidelity = $this->buildFidelity($job->getFidelity());
         $mimeMediaType = $this->buildMimeMediaType($part['mimeType']);
-        $operationAttributes = $this->buildOperationAttributes();
+        // @todo
+        $operationAttributes = '';//$this->buildOperationAttributes();
         $lastDocument = $this->buildLastDocument($isLast);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x06) // Send-Document | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -769,9 +713,9 @@ class JobManager extends ManagerAbstract
         if ($jobName) {
             $jobName .= ($absolute ? '' : date('-H:i:s-').str_pad(++$counter, 4, '0', STR_PAD_LEFT));
             $value = chr(0x42) // nameWithoutLanguage type || value-tag
-              .$this->getStringLength('job-name') //  name-length
+              .$this->builder->formatStringLength('job-name') //  name-length
               .'job-name' //  job-name || name
-              .$this->getStringLength($jobName) // value-length
+              .$this->builder->formatStringLength($jobName) // value-length
               .$jobName; // value
         }
 
@@ -789,7 +733,7 @@ class JobManager extends ManagerAbstract
 
         if ($fidelity) {
             $value = chr(0x22) // boolean type  |  value-tag
-              .$this->getStringLength('ipp-attribute-fidelity') //                  name-length
+              .$this->builder->formatStringLength('ipp-attribute-fidelity') //                  name-length
               .'ipp-attribute-fidelity' // ipp-attribute-fidelity | name
               .chr(0x00).chr(0x01) //  value-length
               .chr(0x01); //  true | value
@@ -808,11 +752,11 @@ class JobManager extends ManagerAbstract
         $value = '';
 
         if ($timeout) {
-            $integer = $this->buildInteger($timeout);
+            $integer = $this->builder->formatInteger($timeout);
             $value = chr(0x21) // integer
-              .$this->getStringLength('multiple-operation-time-out')
+              .$this->builder->formatStringLength('multiple-operation-time-out')
               .'multiple-operation-time-out'
-              .$this->getStringLength($integer)
+              .$this->builder->formatStringLength($integer)
               .$integer;
         }
 
@@ -829,11 +773,11 @@ class JobManager extends ManagerAbstract
         $value = '';
 
         if ($copies && $copies > 1) {
-            $integer = $this->buildInteger($copies);
+            $integer = $this->builder->formatInteger($copies);
             $value = chr(0x21) // integer type | value-tag
-              .$this->getStringLength('copies') //             name-length
+              .$this->builder->formatStringLength('copies') //             name-length
               .'copies' // copies    |             name
-              .$this->getStringLength($integer) // value-length
+              .$this->builder->formatStringLength($integer) // value-length
               .$integer;
         }
 
@@ -866,9 +810,9 @@ class JobManager extends ManagerAbstract
             }
 
             $value = chr(0x44) // keyword type | value-tag
-              .$this->getStringLength('sides') //        name-length
+              .$this->builder->formatStringLength('sides') //        name-length
               .'sides' // sides |             name
-              .$this->getStringLength($sides) //               value-length
+              .$this->builder->formatStringLength($sides) //               value-length
               .$sides; // one-sided |          value
         }
 
@@ -890,18 +834,18 @@ class JobManager extends ManagerAbstract
             $ranges = explode(',', $pageRanges);
 
             foreach ($ranges as $range) {
-                $tmp = $this->buildRangeOfInteger($range);
+                $tmp = $this->builder->formatRangeOfInteger($range);
 
                 if ($first) {
-                    $value .= $this->tagsTypes['rangeOfInteger']['tag']
-                      .$this->getStringLength('page-ranges')
+                    $value .= chr(0x33)
+                      .$this->builder->formatStringLength('page-ranges')
                       .'page-ranges'
-                      .$this->getStringLength($tmp)
+                      .$this->builder->formatStringLength($tmp)
                       .$tmp;
                 } else {
-                    $value .= $this->tagsTypes['rangeOfInteger']['tag']
-                      .$this->getStringLength('')
-                      .$this->getStringLength($tmp)
+                    $value .= chr(0x33)
+                      .$this->builder->formatStringLength('')
+                      .$this->builder->formatStringLength($tmp)
                       .$tmp;
                     $first = false;
                 }
@@ -920,9 +864,9 @@ class JobManager extends ManagerAbstract
     {
         $isLast = ($isLast ? chr(0x01) : chr(0x00));
         $value = chr(0x22) // boolean
-          .$this->getStringLength('last-document')
+          .$this->builder->formatStringLength('last-document')
           .'last-document'
-          .$this->getStringLength($isLast)
+          .$this->builder->formatStringLength($isLast)
           .$isLast;
 
         return $value;
@@ -939,9 +883,9 @@ class JobManager extends ManagerAbstract
 
         if ($name) {
             $value = chr(0x41) // textWithoutLanguage tag
-              .$this->getStringLength('document-name')
+              .$this->builder->formatStringLength('document-name')
               .'document-name' // mimeMediaType
-              .$this->getStringLength($name)
+              .$this->builder->formatStringLength($name)
               .$name; // value
         }
 
@@ -959,9 +903,9 @@ class JobManager extends ManagerAbstract
 
         if ($mimeType) {
             $value = chr(0x49) // document-format tag
-              .$this->getStringLength('document-format')
+              .$this->builder->formatStringLength('document-format')
               .'document-format' //
-              .$this->getStringLength($mimeType)
+              .$this->builder->formatStringLength($mimeType)
               .$mimeType; // value
         }
 
@@ -987,15 +931,15 @@ class JobManager extends ManagerAbstract
                     if ($first) {
                         $string .=
                           $values['tag']
-                          .$this->getStringLength($key)
+                          .$this->builder->formatStringLength($key)
                           .$key
-                          .$this->getStringLength($item_value)
+                          .$this->builder->formatStringLength($item_value)
                           .$item_value;
                     } else {
                         $string .=
                           $values['tag']
-                          .$this->getStringLength('')
-                          .$this->getStringLength($item_value)
+                          .$this->builder->formatStringLength('')
+                          .$this->builder->formatStringLength($item_value)
                           .$item_value;
                     }
 
@@ -1024,7 +968,7 @@ class JobManager extends ManagerAbstract
                     if (is_bool($value)) {
                         $value = intval($value);
                     }
-                    $attributes['values'][] = $this->buildInteger($value);
+                    $attributes['values'][] = $this->builder->formatInteger($value);
                     break;
 
                 case 'nameWithoutLanguage':

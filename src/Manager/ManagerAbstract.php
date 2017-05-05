@@ -2,6 +2,7 @@
 
 namespace Smalot\Cups\Manager;
 
+use Http\Client\HttpClient;
 use Smalot\Cups\Builder\Builder;
 
 /**
@@ -18,6 +19,11 @@ class ManagerAbstract
     use Traits\UsernameAware;
 
     /**
+     * @var \Http\Client\HttpClient
+     */
+    protected $client;
+
+    /**
      * @var \Smalot\Cups\Builder\Builder
      */
     protected $builder;
@@ -31,11 +37,18 @@ class ManagerAbstract
      * ManagerAbstract constructor.
      *
      * @param \Smalot\Cups\Builder\Builder $builder
+     * @param \Http\Client\HttpClient $client
      */
-    public function __construct(Builder $builder)
+    public function __construct(Builder $builder, HttpClient $client)
     {
+        $this->client = $client;
         $this->builder = $builder;
         $this->version = chr(0x01).chr(0x01);
+
+        $this->setCharset('us-ascii');
+        $this->setLanguage('en-us');
+        $this->setOperationId(0);
+        $this->setUsername('');
     }
 
     /**
