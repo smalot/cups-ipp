@@ -110,6 +110,7 @@ class PrinterManager extends atoum\test
         // Reset status
         $printer = $printerManager->getDefault();
         $this->object($printer)->isInstanceOf('\Smalot\Cups\Model\Printer');
+        $printerManager->resume($printer);
         $this->string($printer->getStatus())->isEqualTo('idle');
     }
 }
