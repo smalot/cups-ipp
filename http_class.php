@@ -338,6 +338,7 @@ class http_class
 
  private function _streamString ($string)
  {
+  file_put_contents('dump', $string, FILE_APPEND);
   $success = fwrite ($this->connection, $string);
   if (!$success)
   {

@@ -392,4 +392,39 @@ class PrinterManager extends ManagerAbstract
 
         return $printer;
     }
+
+    /**
+     * @return string
+     */
+    protected function buildPrinterAttributes()
+    {
+        $attributes = '';
+
+        foreach ($this->printerTags as $key => $values) {
+            $item = 0;
+            if (array_key_exists('value', $values)) {
+                foreach ($values['value'] as $item_value) {
+                    if ($item == 0) {
+                        $attributes .=
+                          $values['tag']
+                          .$this->getStringLength($key)
+                          .$key
+                          .$this->getStringLength($item_value)
+                          .$item_value;
+                    } else {
+                        $attributes .=
+                          $values['tag']
+                          .$this->getStringLength('')
+                          .$this->getStringLength($item_value)
+                          .$item_value;
+                    }
+                    $item++;
+                }
+            }
+        }
+
+        reset($this->printerTags);
+
+        return $attributes;
+    }
 }

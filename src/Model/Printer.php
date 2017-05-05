@@ -10,6 +10,8 @@ namespace Smalot\Cups\Model;
 class Printer implements PrinterInterface
 {
 
+    use Traits\AttributeAware;
+
     /**
      * @var string
      */
@@ -19,11 +21,6 @@ class Printer implements PrinterInterface
      * @var string
      */
     protected $name;
-
-    /**
-     * @var array
-     */
-    protected $attributes = [];
 
     /**
      * @var string
@@ -66,26 +63,6 @@ class Printer implements PrinterInterface
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @param array $attributes
-     *
-     * @return Printer
-     */
-    public function setAttributes($attributes)
-    {
-        $this->attributes = $attributes;
 
         return $this;
     }

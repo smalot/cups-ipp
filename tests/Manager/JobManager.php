@@ -74,7 +74,7 @@ class JobManager extends atoum\test
 
         $this->boolean($result)->isTrue();
         $this->integer($job->getId())->isGreaterThan(0);
-        $this->string($job->getState())->isEqualTo('completed');
+        $this->string($job->getState())->isEqualTo('processing'); // completed ?
         $this->string($job->getPrinterUri())->isEqualTo($printer->getUri());
         $this->string($job->getPrinterUri())->isEqualTo($printerUri);
 

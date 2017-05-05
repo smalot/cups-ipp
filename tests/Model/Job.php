@@ -27,9 +27,10 @@ class Job extends atoum\test
         $job->setState('idle');
         $job->setStateReason('Not working');
         $job->setAttributes(['job-id' => 8]);
+        $job->addAttribute('margin', 9);
 
         $job->addText('simple text', 'no name');
-        $job->addFile('filename.ext', 'text/plain', 'my file');
+        $job->addFile('filename.ext', 'my file', 'text/plain');
 
         $this->integer($job->getId())->isEqualTo(1);
         $this->string($job->getName())->isEqualTo('Job #1');
@@ -42,7 +43,7 @@ class Job extends atoum\test
         $this->integer($job->getFidelity())->isEqualTo(1);
         $this->string($job->getState())->isEqualTo('idle');
         $this->string($job->getStateReason())->isEqualTo('Not working');
-        $this->array($job->getAttributes())->isEqualTo(['job-id' => 8]);
+        $this->array($job->getAttributes())->isEqualTo(['job-id' => [8], 'margin' => [9]]);
 
         $content = $job->getContent();
         $this->array($content)->hasSize(2);
@@ -51,14 +52,15 @@ class Job extends atoum\test
             'type' => 'text',
             'text' => 'simple text',
             'name' => 'no name',
+            'mimeType' => '',
           ]
         );
         $this->array($content[1])->isEqualTo(
           [
             'type' => 'file',
             'filename' => 'filename.ext',
-            'mimetype' => 'text/plain',
             'name' => 'my file',
+            'mimeType' => 'text/plain',
           ]
         );
     }

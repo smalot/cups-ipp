@@ -10,6 +10,8 @@ namespace Smalot\Cups\Model;
 class Job implements JobInterface
 {
 
+    use Traits\AttributeAware;
+
     const CONTENT_FILE = 'file';
 
     const CONTENT_TEXT = 'text';
@@ -63,11 +65,6 @@ class Job implements JobInterface
      * @var array
      */
     protected $content = [];
-
-    /**
-     * @var array
-     */
-    protected $attributes = [];
 
     /**
      * @var string
@@ -269,18 +266,22 @@ class Job implements JobInterface
 
     /**
      * @param string $filename
-     * @param string $mimetype
      * @param string $name
+     * @param string $mimeType
      *
      * @return Job
      */
-    public function addFile($filename, $mimetype = 'application/octet-stream', $name = '')
+    public function addFile($filename, $name = '', $mimeType = 'application/octet-stream')
     {
+        if (empty($name)) {
+            $name = basename($filename);
+        }
+
         $this->content[] = [
           'type' => self::CONTENT_FILE,
-          'filename' => $filename,
-          'mimetype' => $mimetype,
           'name' => $name,
+          'mimeType' => $mimeType,
+          'filename' => $filename,
         ];
 
         return $this;
@@ -296,29 +297,10 @@ class Job implements JobInterface
     {
         $this->content[] = [
           'type' => self::CONTENT_TEXT,
-          'text' => $text,
           'name' => $name,
+          'mimeType' => '',
+          'text' => $text,
         ];
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @param array $attributes
-     *
-     * @return Job
-     */
-    public function setAttributes($attributes)
-    {
-        $this->attributes = $attributes;
 
         return $this;
     }

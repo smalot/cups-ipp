@@ -9,17 +9,22 @@
             "email": "sebastien@malot.fr"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
+        "php": ">=5.6",
         "php-http/socket-client": "^1.0",
         "php-http/client-common": "^1.1",
         "php-http/message": "^1.0",
-        "guzzlehttp/psr7": "^1.2"
+        "guzzlehttp/psr7": "^1.2",
+        "symfony/yaml": "^3.2"
     },
     "require-dev": {
-        "symfony/debug": "^3.2",
-        "atoum/atoum": "^3.0"
+        "symfony/debug": "*",
+        "atoum/atoum": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "suggest": {
+        "wapmorgan/file-type-detector": "Detects file type by filename or content and generates correct mimetype."
     },
     "autoload": {
         "psr-4": {

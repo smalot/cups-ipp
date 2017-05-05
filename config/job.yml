@@ -1,0 +1,30 @@
+#copies:
+#    tag: 'integer'
+finishings:
+    tag: 'enum'
+fit-to-page:
+    tag: 'integer'
+job-hold-until:
+    tag: 'keyword'
+job-message-from-operator:
+    tag: 'textWithoutLanguage'
+job-priority:
+    tag: 'integer'
+job-sheets:
+    tag: 'keyword'
+media:
+    tag: 'keyword'
+multiple-document-handling:
+    tag: 'keyword'
+number-up:
+    tag: 'integer'
+orientation-requested:
+    tag: 'enum'
+#page-ranges:
+#    tag: 'rangeOfInteger'
+print-quality:
+    tag: 'enum'
+printer-resolution:
+    tag: 'resolution'
+#sides:
+#    tag: 'keyword'

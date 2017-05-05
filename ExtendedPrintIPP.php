@@ -374,7 +374,7 @@ class ExtendedPrintIPP extends PrintIPP {
         } else {
             self::_putDebug( _("sending DATA as document\n"));
 
-            $this->outfput = $this->stringjob;
+            $this->output = $this->stringjob;
             $this->output .= $this->datahead;
             $this->output .= $this->data;
             $this->output .= $this->datatail;

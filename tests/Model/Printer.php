@@ -21,7 +21,7 @@ class Printer extends atoum\test
 
         $this->string($printer->getName())->isEqualTo('PDF');
         $this->string($printer->getUri())->isEqualTo('ipp://localhost:631/printers/PDF');
-        $this->array($printer->getAttributes())->isEqualTo(['printer-uri' => 'ipp://localhost:631/printers/PDF']);
+        $this->array($printer->getAttributes())->isEqualTo(['printer-uri' => ['ipp://localhost:631/printers/PDF']]);
         $this->string($printer->getStatus())->isEqualTo('idle');
     }
 }

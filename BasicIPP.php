@@ -985,173 +985,176 @@ class BasicIPP
 
  protected function _initTags()
  {
-  $this->tags_types = array(
-    "unsupported" => array(
-     "tag" => chr(0x10) ,
-     "build" => ""
-     ) ,
-    "reserved" => array(
-     "tag" => chr(0x11) ,
-     "build" => ""
-     ) ,
-    "unknown" => array(
-     "tag" => chr(0x12) ,
-     "build" => ""
-     ) ,
-    "no-value" => array(
-     "tag" => chr(0x13) ,
-     "build" => "no_value"
-     ) ,
-    "integer" => array(
-     "tag" => chr(0x21) ,
-     "build" => "integer"
-     ) ,
-    "boolean" => array(
-      "tag" => chr(0x22) ,
-      "build" => "boolean"
-      ) ,
-    "enum" => array(
-      "tag" => chr(0x23) ,
-      "build" => "enum"
-            ) ,
-    "octetString" => array(
-      "tag" => chr(0x30) ,
-      "build" => "octet_string"
-      ) ,
-    "datetime" => array(
-      "tag" => chr(0x31) ,
-      "build" => "datetime"
-      ) ,
-    "resolution" => array(
-      "tag" => chr(0x32) ,
-      "build" => "resolution"
-      ) ,
-    "rangeOfInteger" => array(
-      "tag" => chr(0x33) ,
-      "build" => "range_of_integers"
-      ) ,
-    "textWithLanguage" => array(
-      "tag" => chr(0x35) ,
-      "build" => "string"
-      ) ,
-    "nameWithLanguage" => array(
-      "tag" => chr(0x36) ,
-      "build" => "string"
-      ) ,
-    /*
-       "text" => array ("tag" => chr(0x40),
-       "build" => "string"),
-       "text string" => array ("tag" => chr(0x40),
-       "build" => "string"),
-     */
-    "textWithoutLanguage" => array(
-      "tag" => chr(0x41) ,
-      "build" => "string"
-      ) ,
-    "nameWithoutLanguage" => array(
-      "tag" => chr(0x42) ,
-      "buid" => "string"
-      ) ,
-    "keyword" => array(
-      "tag" => chr(0x44) ,
-      "build" => "string"
-      ) ,
-    "uri" => array(
-      "tag" => chr(0x45) ,
-      "build" => "string"
-           ) ,
-    "uriScheme" => array(
-      "tag" => chr(0x46) ,
-      "build" => "string"
-      ) ,
-    "charset" => array(
-      "tag" => chr(0x47) ,
-      "build" => "string"
-      ) ,
-    "naturalLanguage" => array(
-      "tag" => chr(0x48) ,
-      "build" => "string"
-      ) ,
-    "mimeMediaType" => array(
-      "tag" => chr(0x49) ,
-      "build" => "string"
-      ) ,
-    "extendedAttributes" => array(
-      "tag" => chr(0x7F) ,
-      "build" => "extended"
-      ) ,
-    );
-  $this->operation_tags = array(
-    "compression" => array(
-     "tag" => "keyword"
-     ) ,
-    "document-natural-language" => array(
-     "tag" => "naturalLanguage"
-     ) ,
-    "job-k-octets" => array(
-     "tag" => "integer"
-     ) ,
-    "job-impressions" => array(
-     "tag" => "integer"
-     ) ,
-    "job-media-sheets" => array(
-     "tag" => "integer"
-     ) ,
-    );
-  $this->job_tags = array(
-    "job-priority" => array(
-     "tag" => "integer"
-     ) ,
-    "job-hold-until" => array(
-     "tag" => "keyword"
-     ) ,
-    "job-sheets" => array(
-     "tag" => "keyword"
-     ) , //banner page
-    "multiple-document-handling" => array(
-     "tag" => "keyword"
-     ) ,
-    //"copies" => array("tag" => "integer"),
-    "finishings" => array(
-     "tag" => "enum"
-     ) ,
-    //"page-ranges" => array("tag" => "rangeOfInteger"), // has its own function
-    //"sides" => array("tag" => "keyword"), // has its own function
-    "number-up" => array(
-     "tag" => "integer"
-     ) ,
-    "orientation-requested" => array(
-      "tag" => "enum"
-      ) ,
-    "media" => array(
-      "tag" => "keyword"
-      ) ,
-    "printer-resolution" => array(
-      "tag" => "resolution"
-      ) ,
-    "print-quality" => array(
-      "tag" => "enum"
-      ) ,
-    "job-message-from-operator" => array(
-      "tag" => "textWithoutLanguage"
-      ) ,
-    );
-  $this->printer_tags = array(
-    "requested-attributes" => array(
-     "tag" => "keyword"
-     )
-    );
+     $this->tags_types = [
+       'unsupported' => [
+         'tag' => chr(0x10),
+         'build' => '',
+       ],
+       'reserved' => [
+         'tag' => chr(0x11),
+         'build' => '',
+       ],
+       'unknown' => [
+         'tag' => chr(0x12),
+         'build' => '',
+       ],
+       'no-value' => [
+         'tag' => chr(0x13),
+         'build' => 'no_value',
+       ],
+       'integer' => [
+         'tag' => chr(0x21),
+         'build' => 'integer',
+       ],
+       'boolean' => [
+         'tag' => chr(0x22),
+         'build' => 'boolean',
+       ],
+       'enum' => [
+         'tag' => chr(0x23),
+         'build' => 'enum',
+       ],
+       'octetString' => [
+         'tag' => chr(0x30),
+         'build' => 'octet_string',
+       ],
+       'datetime' => [
+         'tag' => chr(0x31),
+         'build' => 'datetime',
+       ],
+       'resolution' => [
+         'tag' => chr(0x32),
+         'build' => 'resolution',
+       ],
+       'rangeOfInteger' => [
+         'tag' => chr(0x33),
+         'build' => 'range_of_integers',
+       ],
+       'textWithLanguage' => [
+         'tag' => chr(0x35),
+         'build' => 'string',
+       ],
+       'nameWithLanguage' => [
+         'tag' => chr(0x36),
+         'build' => 'string',
+       ],
+         /*
+            'text' => array ('tag' => chr(0x40),
+            'build' => 'string'),
+            'text string' => array ('tag' => chr(0x40),
+            'build' => 'string'),
+          */
+       'textWithoutLanguage' => [
+         'tag' => chr(0x41),
+         'build' => 'string',
+       ],
+       'nameWithoutLanguage' => [
+         'tag' => chr(0x42),
+         'buid' => 'string',
+       ],
+       'keyword' => [
+         'tag' => chr(0x44),
+         'build' => 'string',
+       ],
+       'uri' => [
+         'tag' => chr(0x45),
+         'build' => 'string',
+       ],
+       'uriScheme' => [
+         'tag' => chr(0x46),
+         'build' => 'string',
+       ],
+       'charset' => [
+         'tag' => chr(0x47),
+         'build' => 'string',
+       ],
+       'naturalLanguage' => [
+         'tag' => chr(0x48),
+         'build' => 'string',
+       ],
+       'mimeMediaType' => [
+         'tag' => chr(0x49),
+         'build' => 'string',
+       ],
+       'extendedAttributes' => [
+         'tag' => chr(0x7F),
+         'build' => 'extended',
+       ],
+     ];
+     $this->operation_tags = [
+       'compression' => [
+         'tag' => 'keyword',
+       ],
+       'document-natural-language' => [
+         'tag' => 'naturalLanguage',
+       ],
+       'job-k-octets' => [
+         'tag' => 'integer',
+       ],
+       'job-impressions' => [
+         'tag' => 'integer',
+       ],
+       'job-media-sheets' => [
+         'tag' => 'integer',
+       ],
+     ];
+     $this->job_tags = [
+       'job-priority' => [
+         'tag' => 'integer',
+       ],
+       'job-hold-until' => [
+         'tag' => 'keyword',
+       ],
+       'job-sheets' => [
+         'tag' => 'keyword',
+       ], //banner page
+       'multiple-document-handling' => [
+         'tag' => 'keyword',
+       ],
+         //'copies' => array('tag' => 'integer'),
+       'finishings' => [
+         'tag' => 'enum',
+       ],
+         //'page-ranges' => array('tag' => 'rangeOfInteger'), // has its own function
+         //'sides' => array('tag' => 'keyword'), // has its own function
+       'number-up' => [
+         'tag' => 'integer',
+       ],
+       'orientation-requested' => [
+         'tag' => 'enum',
+       ],
+       'media' => [
+         'tag' => 'keyword',
+       ],
+       'printer-resolution' => [
+         'tag' => 'resolution',
+       ],
+       'print-quality' => [
+         'tag' => 'enum',
+       ],
+       'job-message-from-operator' => [
+         'tag' => 'textWithoutLanguage',
+       ],
+       'fit-to-page' => [
+         'tag' => 'integer',
+       ],
+     ];
+     $this->printer_tags = [
+       'requested-attributes' => [
+         'tag' => 'keyword',
+       ],
+     ];
  }
 
- //
- // SETUP
- //
+    //
+    // SETUP
+    //
 
- protected function _setOperationId()
- {
-  $prepend = '';
-  $this->operation_id+= 1;
-  $this->meta->operation_id = self::_integerBuild($this->operation_id);
+    protected function _setOperationId()
+    {
+        $prepend = '';
+        $this->operation_id += 1;
+        $this->meta->operation_id = self::_integerBuild($this->operation_id);
   self::_putDebug("operation id is: " . $this->operation_id, 2);
  }
 

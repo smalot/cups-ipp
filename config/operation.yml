@@ -1,0 +1,10 @@
+compression:
+    tag: 'keyword'
+document-natural-language:
+    tag: 'naturalLanguage'
+job-k-octets:
+    tag: 'integer'
+job-impressions:
+    tag: 'integer'
+job-media-sheets:
+    tag: 'integer'
