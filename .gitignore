@@ -3,4 +3,7 @@
 /.idea/
 /tmp
 /test*.php
+/*.pdf
+/*.txt
+/dump*
 composer.lock
