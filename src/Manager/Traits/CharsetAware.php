@@ -45,7 +45,7 @@ trait CharsetAware
         $metaCharset = chr(0x47) // charset type | value-tag
           .chr(0x00).chr(0x12) // name-length
           .'attributes-charset' // attributes-charset | name
-          .$this->getStringLength($charset) // value-length
+          .$this->builder->formatStringLength($charset) // value-length
           .$charset; // value
 
         return $metaCharset;

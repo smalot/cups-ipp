@@ -49,7 +49,7 @@ trait OperationIdAware
     protected function buildOperationId($type = 'new')
     {
         $operationId = $this->getOperationId($type);
-        $metaOperationId = $this->buildInteger($operationId);
+        $metaOperationId = $this->builder->formatInteger($operationId);
 
         return $metaOperationId;
     }

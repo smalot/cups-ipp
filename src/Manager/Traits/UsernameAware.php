@@ -46,7 +46,7 @@ trait UsernameAware
             $metaUsername = chr(0x42) // keyword type || value-tag
               .chr(0x00).chr(0x14) // name-length
               .'requesting-user-name'
-              .$this->getStringLength($username) // value-length
+              .$this->builder->formatStringLength($username) // value-length
               .$username;
         } else {
             $metaUsername = '';

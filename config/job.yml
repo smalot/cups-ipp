@@ -12,6 +12,10 @@ job-priority:
     tag: 'integer'
 job-sheets:
     tag: 'keyword'
+job-uri:
+    tag: 'uri'
+last-document:
+    tag: 'boolean'
 media:
     tag: 'keyword'
 multiple-document-handling:

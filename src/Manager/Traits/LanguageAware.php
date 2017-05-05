@@ -44,7 +44,7 @@ trait LanguageAware
         $metaLanguage = chr(0x48) // natural-language type | value-tag
           .chr(0x00).chr(0x1B) //  name-length
           .'attributes-natural-language' //attributes-natural-language
-          .$this->getStringLength($language) // value-length
+          .$this->builder->formatStringLength($language) // value-length
           .$language; // value
 
         return $metaLanguage;

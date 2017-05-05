@@ -45,7 +45,7 @@ class JobManager extends atoum\test
         $jobManager = new \Smalot\Cups\Manager\JobManager($client);
         $jobs = $jobManager->getList($printer, false);
 
-        $this->array($jobs)->isEmpty();
+        $this->array($jobs)->isNotEmpty();
     }
 
     public function testCreateJob()
@@ -94,6 +94,6 @@ class JobManager extends atoum\test
         $jobManager = new \Smalot\Cups\Manager\JobManager($client);
         $jobs = $jobManager->getList($printer, false);
 
-        $this->array($jobs)->isEmpty();
+        $this->array($jobs)->isNotEmpty();
     }
 }

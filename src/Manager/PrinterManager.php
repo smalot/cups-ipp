@@ -3,6 +3,7 @@
 namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
+use Smalot\Cups\Builder\Builder;
 use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Model\PrinterInterface;
 use Smalot\Cups\Transport\Response as CupsResponse;
@@ -24,11 +25,12 @@ class PrinterManager extends ManagerAbstract
     /**
      * Printer constructor.
      *
+     * @param \Smalot\Cups\Builder\Builder $builder
      * @param \Http\Client\HttpClient $client
      */
-    public function __construct(HttpClient $client)
+    public function __construct(Builder $builder, HttpClient $client)
     {
-        parent::__construct();
+        parent::__construct($builder);
 
         $this->client = $client;
 
@@ -188,7 +190,7 @@ class PrinterManager extends ManagerAbstract
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
         $printerAttributes = $this->buildPrinterAttributes();
-        $printerUri = $this->buildPrinterURI($uri);
+        $printerUri = $this->buildProperty('printer-uri', $uri);
 
         $content = chr(0x01).chr(0x01) // 1.1  | version-number
           .chr(0x00).chr(0x0b) // Print-URI | operation-id
@@ -243,7 +245,7 @@ class PrinterManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerUri = $this->buildPrinterURI($uri);
+        $printerUri = $this->buildProperty('printer-uri', $uri);
 
         $content = chr(0x01).chr(0x01) // 1.1  | version-number
           .chr(0x00).chr(0x10) // Pause-Printer | operation-id
@@ -271,7 +273,7 @@ class PrinterManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerUri = $this->buildPrinterURI($uri);
+        $printerUri = $this->buildProperty('printer-uri', $uri);
 
         $content = chr(0x01).chr(0x01) // 1.1  | version-number
           .chr(0x00).chr(0x11) // Resume-Printer | operation-id
@@ -299,7 +301,8 @@ class PrinterManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerUri = $this->buildPrinterURI($uri);
+        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $purgeJob = $this->buildProperty('purge-jobs', 1);
 
         // Needs a build function call.
         $message = '';
@@ -312,11 +315,7 @@ class PrinterManager extends ManagerAbstract
           .$language
           .$printerUri
           .$username
-          .chr(0x22)
-          .$this->getStringLength('purge-jobs')
-          .'purge-jobs'
-          .$this->getStringLength(chr(0x01))
-          .chr(0x01)
+          .$purgeJob
           .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
@@ -356,14 +355,14 @@ class PrinterManager extends ManagerAbstract
         for ($i = 0; $i < count($attributes); $i++) {
             if ($i == 0) {
                 $metaAttributes .= chr(0x44) // Keyword
-                  .$this->getStringLength('requested-attributes')
+                  .$this->builder->formatStringLength('requested-attributes')
                   .'requested-attributes'
-                  .$this->getStringLength($attributes[0])
+                  .$this->builder->formatStringLength($attributes[0])
                   .$attributes[0];
             } else {
                 $metaAttributes .= chr(0x44) // Keyword
                   .chr(0x0).chr(0x0) // zero-length name
-                  .$this->getStringLength($attributes[$i])
+                  .$this->builder->formatStringLength($attributes[$i])
                   .$attributes[$i];
             }
         }
@@ -400,30 +399,29 @@ class PrinterManager extends ManagerAbstract
     {
         $attributes = '';
 
-        foreach ($this->printerTags as $key => $values) {
-            $item = 0;
-            if (array_key_exists('value', $values)) {
-                foreach ($values['value'] as $item_value) {
-                    if ($item == 0) {
-                        $attributes .=
-                          $values['tag']
-                          .$this->getStringLength($key)
-                          .$key
-                          .$this->getStringLength($item_value)
-                          .$item_value;
-                    } else {
-                        $attributes .=
-                          $values['tag']
-                          .$this->getStringLength('')
-                          .$this->getStringLength($item_value)
-                          .$item_value;
-                    }
-                    $item++;
-                }
-            }
-        }
-
-        reset($this->printerTags);
+//        foreach ($this->printerTags as $key => $values) {
+//            $item = 0;
+//
+//            if (array_key_exists('value', $values)) {
+//                foreach ($values['value'] as $item_value) {
+//                    if ($item == 0) {
+//                        $attributes .=
+//                          $values['tag']
+//                          .$this->builder->formatStringLength($key)
+//                          .$key
+//                          .$this->builder->formatStringLength($item_value)
+//                          .$item_value;
+//                    } else {
+//                        $attributes .=
+//                          $values['tag']
+//                          .$this->builder->formatStringLength('')
+//                          .$this->builder->formatStringLength($item_value)
+//                          .$item_value;
+//                    }
+//                    $item++;
+//                }
+//            }
+//        }
 
         return $attributes;
     }

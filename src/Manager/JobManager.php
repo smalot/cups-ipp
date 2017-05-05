@@ -208,6 +208,14 @@ class JobManager extends ManagerAbstract
     /**
      * @param JobInterface $job
      * @param string $until
+     * Can be:
+     * - no-hold
+     * - day-time
+     * - evening
+     * - night
+     * - weekend
+     * - second-shift
+     * - third-shift
      *
      * @return bool
      */
@@ -904,18 +912,6 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $range
-     *
-     * @return string
-     */
-    protected function buildRangeOfInteger($range)
-    {
-        $integers = preg_split('/[:,]/', $range);
-
-        return $this->buildInteger($integers[0]).$this->buildInteger($integers[0]);
-    }
-
-    /**
      * @param bool $isLast
      *
      * @return string
@@ -1041,7 +1037,7 @@ class JobManager extends ManagerAbstract
                     break;
 
                 case 'enum':
-                    // $value = $this->buildEnum($name, $value); // may be overwritten by children
+//                     $value = $this->buildEnum($name, $value); // may be overwritten by children
                     $attributes['values'][] = $value;
                     break;
 
