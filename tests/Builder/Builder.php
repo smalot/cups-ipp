@@ -83,19 +83,8 @@ class Builder extends atoum\test
         $this->string($length)->isEqualTo(chr(0).chr(0).chr(0).chr(1).chr(0).chr(0).chr(0).chr(5));
         $length = $builder->formatRangeOfInteger('1-5');
         $this->string($length)->isEqualTo(chr(0).chr(0).chr(0).chr(1).chr(0).chr(0).chr(0).chr(5));
-
-        $this->when(
-          function () use ($builder) {
-              $this->exception(
-                function () use ($builder) {
-                    $builder->formatRangeOfInteger('5');
-                }
-              )->hasMessage('Values must be between -2147483648 and 2147483647.');
-          }
-        )
-          ->error()
-          ->withMessage('Undefined offset: 1')
-          ->exists();
+        $length = $builder->formatRangeOfInteger('5');
+        $this->string($length)->isEqualTo(chr(0).chr(0).chr(0).chr(5).chr(0).chr(0).chr(0).chr(5));
     }
 
     public function testBuildProperty()
@@ -194,7 +183,7 @@ class Builder extends atoum\test
           function () use ($builder) {
               $builder->getTypeFromProperty('property not defined');
           }
-        )->hasMessage('Property not found');
+        )->hasMessage('Property not found: "property not defined".');
     }
 
     public function testGetTagByType()
@@ -248,12 +237,5 @@ class Builder extends atoum\test
 
         $type = $builder->getTagFromType('unsupported');
         $this->string($type)->isNotEqualTo(chr(0x11));
-    }
-
-    public function testBuildJobURI()
-    {
-        $builder = new \Smalot\Cups\Builder\Builder();
-
-
     }
 }
