@@ -41,28 +41,22 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param array $attributes
+     * @param string $uri
      *
-     * @return \Smalot\Cups\Model\Printer[]
+     * @return \Smalot\Cups\Model\Printer|false
      */
-    public function getList($attributes = [])
+    public function findByUri($uri)
     {
-        $request = $this->prepareGetListRequest($attributes);
-        $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
-        $values = $result->getValues();
-        $list = [];
+        $printer = new Printer();
+        $printer->setUri($uri);
 
-        if (!empty($values['printer-attributes'])) {
-            foreach ($values['printer-attributes'] as $item) {
-                $printer = new Printer();
-                $this->fillAttributes($printer, $item);
+        $this->reloadAttributes($printer);
 
-                $list[] = $printer;
-            }
+        if ($printer->getName()) {
+            return $printer;
+        } else {
+            return false;
         }
-
-        return $list;
     }
 
     /**
@@ -102,6 +96,31 @@ class PrinterManager extends ManagerAbstract
         }
 
         return $printer;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return \Smalot\Cups\Model\Printer[]
+     */
+    public function getList($attributes = [])
+    {
+        $request = $this->prepareGetListRequest($attributes);
+        $response = $this->client->sendRequest($request);
+        $result = CupsResponse::parseResponse($response);
+        $values = $result->getValues();
+        $list = [];
+
+        if (!empty($values['printer-attributes'])) {
+            foreach ($values['printer-attributes'] as $item) {
+                $printer = new Printer();
+                $this->fillAttributes($printer, $item);
+
+                $list[] = $printer;
+            }
+        }
+
+        return $list;
     }
 
     /**
@@ -159,12 +178,13 @@ class PrinterManager extends ManagerAbstract
      */
     protected function prepareGetListRequest($attributes = [])
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
+
         $metaAttributes = $this->buildPrinterRequestedAttributes($attributes);
 
-        $content = chr(0x01).chr(0x01) // IPP version 1.1
+        $content = $this->getVersion() // IPP version 1.1
           .chr(0x40).chr(0x02) // operation:  cups vendor extension: get printers
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -185,21 +205,22 @@ class PrinterManager extends ManagerAbstract
      */
     protected function prepareReloadAttributesRequest($uri)
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerAttributes = $this->buildPrinterAttributes();
-        $printerUri = $this->buildProperty('printer-uri', $uri);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $printerAttributes = $this->buildPrinterAttributes();
+
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x0b) // Print-URI | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$printerUri
           .$username
+          .$printerUri
           .$printerAttributes
           .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
@@ -215,12 +236,13 @@ class PrinterManager extends ManagerAbstract
      */
     protected function prepareGetDefaultRequest($attributes = [])
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
+
         $metaAttributes = $this->buildPrinterRequestedAttributes($attributes);
 
-        $content = chr(0x01).chr(0x01) // IPP version 1.1
+        $content = $this->getVersion() // IPP version 1.1
           .chr(0x40).chr(0x01) // operation:  cups vendor extension: get default printer
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
@@ -241,20 +263,21 @@ class PrinterManager extends ManagerAbstract
      */
     protected function preparePauseRequest($uri)
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
+
         $printerUri = $this->buildProperty('printer-uri', $uri);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x10) // Pause-Printer | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$printerUri
           .$username
+          .$printerUri
           .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
@@ -269,20 +292,21 @@ class PrinterManager extends ManagerAbstract
      */
     protected function prepareResumeRequest($uri)
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
+
         $printerUri = $this->buildProperty('printer-uri', $uri);
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x11) // Resume-Printer | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$printerUri
           .$username
+          .$printerUri
           .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         $headers = ['Content-Type' => 'application/ipp'];
@@ -297,24 +321,25 @@ class PrinterManager extends ManagerAbstract
      */
     protected function preparePurgeRequest($uri)
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
+
         $printerUri = $this->buildProperty('printer-uri', $uri);
         $purgeJob = $this->buildProperty('purge-jobs', 1);
 
-        // Needs a build function call.
+        // Needs a dedicated build function call.
         $message = '';
 
-        $content = chr(0x01).chr(0x01) // 1.1  | version-number
+        $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x12) // purge-Jobs | operation-id
           .$operationId //           request-id
           .chr(0x01) // start operation-attributes | operation-attributes-tag
           .$charset
           .$language
-          .$printerUri
           .$username
+          .$printerUri
           .$purgeJob
           .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
@@ -324,22 +349,8 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @return array
-     */
-    protected function getDefaultAttributes()
-    {
-        return [
-          'printer-uri-supported',
-          'printer-name',
-          'printer-state',
-          'printer-location',
-          'printer-info',
-          'printer-type',
-          'printer-icons',
-        ];
-    }
-
-    /**
+     * @todo: move this method into a dedicated builder
+     *
      * @param array $attributes
      *
      * @return string
@@ -347,7 +358,15 @@ class PrinterManager extends ManagerAbstract
     protected function buildPrinterRequestedAttributes($attributes = [])
     {
         if (empty($attributes)) {
-            $attributes = $this->getDefaultAttributes();
+            $attributes = [
+              'printer-uri-supported',
+              'printer-name',
+              'printer-state',
+              'printer-location',
+              'printer-info',
+              'printer-type',
+              'printer-icons',
+            ];
         }
 
         $metaAttributes = '';
@@ -399,29 +418,29 @@ class PrinterManager extends ManagerAbstract
     {
         $attributes = '';
 
-//        foreach ($this->printerTags as $key => $values) {
-//            $item = 0;
-//
-//            if (array_key_exists('value', $values)) {
-//                foreach ($values['value'] as $item_value) {
-//                    if ($item == 0) {
-//                        $attributes .=
-//                          $values['tag']
-//                          .$this->builder->formatStringLength($key)
-//                          .$key
-//                          .$this->builder->formatStringLength($item_value)
-//                          .$item_value;
-//                    } else {
-//                        $attributes .=
-//                          $values['tag']
-//                          .$this->builder->formatStringLength('')
-//                          .$this->builder->formatStringLength($item_value)
-//                          .$item_value;
-//                    }
-//                    $item++;
-//                }
-//            }
-//        }
+        //        foreach ($this->printerTags as $key => $values) {
+        //            $item = 0;
+        //
+        //            if (array_key_exists('value', $values)) {
+        //                foreach ($values['value'] as $item_value) {
+        //                    if ($item == 0) {
+        //                        $attributes .=
+        //                          $values['tag']
+        //                          .$this->builder->formatStringLength($key)
+        //                          .$key
+        //                          .$this->builder->formatStringLength($item_value)
+        //                          .$item_value;
+        //                    } else {
+        //                        $attributes .=
+        //                          $values['tag']
+        //                          .$this->builder->formatStringLength('')
+        //                          .$this->builder->formatStringLength($item_value)
+        //                          .$item_value;
+        //                    }
+        //                    $item++;
+        //                }
+        //            }
+        //        }
 
         return $attributes;
     }

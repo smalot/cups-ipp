@@ -23,6 +23,11 @@ class ManagerAbstract
     protected $builder;
 
     /**
+     * @var string
+     */
+    protected $version;
+
+    /**
      * ManagerAbstract constructor.
      *
      * @param \Smalot\Cups\Builder\Builder $builder
@@ -30,6 +35,7 @@ class ManagerAbstract
     public function __construct(Builder $builder)
     {
         $this->builder = $builder;
+        $this->version = chr(0x01).chr(0x01);
     }
 
     /**
@@ -42,5 +48,13 @@ class ManagerAbstract
     public function buildProperty($name, $value, $emptyIfMissing = false)
     {
         return $this->builder->buildProperty($name, $value, $emptyIfMissing);
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 }
