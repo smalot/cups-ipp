@@ -803,7 +803,7 @@ class JobManager extends ManagerAbstract
                     break;
 
                 case 'enum':
-//                     $value = $this->buildEnum($name, $value); // may be overwritten by children
+                    //                     $value = $this->buildEnum($name, $value); // may be overwritten by children
                     $attributes['values'][] = $value;
                     break;
 

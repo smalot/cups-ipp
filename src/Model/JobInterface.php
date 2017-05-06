@@ -9,6 +9,7 @@ namespace Smalot\Cups\Model;
  */
 interface JobInterface
 {
+
     /**
      * @return int
      */

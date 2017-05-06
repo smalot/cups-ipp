@@ -11,6 +11,7 @@ use mageekguy\atoum;
  */
 class Printer extends atoum\test
 {
+
     public function testPrinter()
     {
         $printer = new \Smalot\Cups\Model\Printer();

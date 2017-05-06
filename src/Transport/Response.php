@@ -11,6 +11,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Response
 {
+
     /**
      * @var string
      */

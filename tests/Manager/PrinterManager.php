@@ -15,6 +15,7 @@ use Smalot\Cups\Transport\Client;
  */
 class PrinterManager extends atoum\test
 {
+
     protected $printerUri = 'ipp://localhost:631/printers/PDF';
 
     public function testPrinterManager()
@@ -54,7 +55,7 @@ class PrinterManager extends atoum\test
 
                 $this->string($printer->getName())->isEqualTo('PDF');
                 $this->string($printer->getUri())->isEqualTo($this->printerUri);
-//                $this->string($printer->getStatus())->isEqualTo('idle');
+                //                $this->string($printer->getStatus())->isEqualTo('idle');
                 break;
             }
         }
@@ -91,8 +92,6 @@ class PrinterManager extends atoum\test
 
     public function testPurge()
     {
-        return;
-
         $user = getenv('USER');
         $password = getenv('PASS');
 
@@ -119,6 +118,6 @@ class PrinterManager extends atoum\test
         $printer = $printerManager->getDefault();
         $this->object($printer)->isInstanceOf('\Smalot\Cups\Model\Printer');
         $this->string($printer->getUri())->isEqualTo($this->printerUri);
-//        $this->string($printer->getStatus())->isEqualTo('idle');
+        //        $this->string($printer->getStatus())->isEqualTo('idle');
     }
 }

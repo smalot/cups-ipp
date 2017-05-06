@@ -9,6 +9,7 @@ namespace Smalot\Cups\Model;
  */
 interface PrinterInterface
 {
+
     /**
      * @return string
      */

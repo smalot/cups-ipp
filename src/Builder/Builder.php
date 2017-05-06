@@ -208,7 +208,7 @@ class Builder
      */
     public function buildProperty($name, $values, $emptyIfMissing = false)
     {
-//        $emptyIfMissing = false;
+        //        $emptyIfMissing = false;
 
         if (!is_array($values)) {
             $values = [$values];
