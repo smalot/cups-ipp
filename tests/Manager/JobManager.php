@@ -108,6 +108,7 @@ class JobManager extends atoum\test
         $printer->setUri($printerUri);
 
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobManager->setUsername($user);
         //        $jobs = $jobManager->getList($printer, false);
         //        $this->array($jobs)->isEmpty();
 

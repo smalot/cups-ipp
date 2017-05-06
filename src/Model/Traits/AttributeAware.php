@@ -62,4 +62,14 @@ trait AttributeAware
     {
         unset($this->attributes[$name]);
     }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasAttribute($name)
+    {
+        return isset($this->attributes[$name]);
+    }
 }

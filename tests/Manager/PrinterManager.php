@@ -38,6 +38,26 @@ class PrinterManager extends atoum\test
         $this->integer($printerManager->getOperationId('new'))->isEqualTo(6);
     }
 
+    public function testFindByUri()
+    {
+        $builder = new Builder();
+        $client = Client::create();
+
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $printerManager->setCharset('utf-8');
+        $printerManager->setLanguage('fr-fr');
+        $printerManager->setOperationId(5);
+        $printerManager->setUsername('testuser');
+
+        $printer = $printerManager->findByUri($this->printerUri);
+
+        $this->string($printer->getName())->isEqualTo('PDF');
+        $this->string($printer->getUri())->isEqualTo($this->printerUri);
+
+        $printer = $printerManager->findByUri('missing');
+        $this->boolean($printer)->isFalse();
+    }
+
     public function testGetList()
     {
         $builder = new Builder();

@@ -36,20 +36,18 @@ trait UsernameAware
     }
 
     /**
-     * @param string $username
-     *
      * @return string
      */
     protected function buildUsername()
     {
         $metaUsername = '';
 
-        if ($username = $this->getUsername()) {
+        if ($this->username) {
             $metaUsername = chr(0x42) // keyword type || value-tag
               .chr(0x00).chr(0x14) // name-length
               .'requesting-user-name'
-              .$this->builder->formatStringLength($username) // value-length
-              .$username;
+              .$this->builder->formatStringLength($this->username) // value-length
+              .$this->username;
         }
 
         return $metaUsername;

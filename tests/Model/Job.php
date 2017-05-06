@@ -29,8 +29,14 @@ class Job extends atoum\test
         $job->setAttributes(['job-id' => 8]);
         $job->addAttribute('margin', 9);
 
+        $job->addAttribute('page-size', 'A4');
+        $this->boolean($job->hasAttribute('page-size'))->isTrue();
+        $job->removeAttribute('page-size');
+        $this->boolean($job->hasAttribute('page-size'))->isFalse();
+
         $job->addText('simple text', 'no name');
-        $job->addFile('filename.ext', 'my file', 'application/pdf');
+        $job->addFile('filename.pdf', 'my file', 'application/pdf');
+        $job->addFile('filename.docx', '', 'application/msword');
 
         $this->integer($job->getId())->isEqualTo(1);
         $this->string($job->getName())->isEqualTo('Job #1');
@@ -46,7 +52,7 @@ class Job extends atoum\test
         $this->array($job->getAttributes())->isEqualTo(['job-id' => [8], 'margin' => [9]]);
 
         $content = $job->getContent();
-        $this->array($content)->hasSize(2);
+        $this->array($content)->hasSize(3);
         $this->array($content[0])->isEqualTo(
           [
             'type' => 'text',
@@ -58,9 +64,17 @@ class Job extends atoum\test
         $this->array($content[1])->isEqualTo(
           [
             'type' => 'file',
-            'filename' => 'filename.ext',
+            'filename' => 'filename.pdf',
             'name' => 'my file',
             'mimeType' => 'application/pdf',
+          ]
+        );
+        $this->array($content[2])->isEqualTo(
+          [
+            'type' => 'file',
+            'filename' => 'filename.docx',
+            'name' => 'filename.docx',
+            'mimeType' => 'application/msword',
           ]
         );
     }
