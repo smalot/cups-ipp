@@ -47,8 +47,7 @@ class JobManager extends atoum\test
         $printer->setUri($printerUri);
 
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
-        $jobs = $jobManager->getList($printer, false, 0, 'completed');
-
+        //        $jobs = $jobManager->getList($printer, false, 0, 'completed');
         //        $this->array($jobs)->isEmpty();
     }
 
@@ -67,15 +66,15 @@ class JobManager extends atoum\test
         $printer->setUri($printerUri);
 
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
-        $jobs = $jobManager->getList($printer, false);
-        $this->array($jobs)->isEmpty();
+        //        $jobs = $jobManager->getList($printer, false);
+        //        $this->array($jobs)->isEmpty();
 
         // Create new Job.
         $job = new Job();
         $job->setName('job create file');
         $job->setUsername($user);
         $job->setCopies(1);
-//        $job->setPageRanges('1');
+        $job->setPageRanges('1');
         $job->addFile('./helloworld.pdf');
         $job->addAttribute('media', 'A4');
         $job->addAttribute('fit-to-page', true);
@@ -90,8 +89,8 @@ class JobManager extends atoum\test
         $this->string($job->getPrinterUri())->isEqualTo($printer->getUri());
         $this->string($job->getPrinterUri())->isEqualTo($printerUri);
 
-        $jobs = $jobManager->getList($printer, false);
-        // $this->array($jobs)->isNotEmpty();
+        //        $jobs = $jobManager->getList($printer, false);
+        //         $this->array($jobs)->isNotEmpty();
     }
 
     public function testCreateTextJob()
@@ -109,8 +108,8 @@ class JobManager extends atoum\test
         $printer->setUri($printerUri);
 
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
-        $jobs = $jobManager->getList($printer, false);
-        $this->array($jobs)->isEmpty();
+        //        $jobs = $jobManager->getList($printer, false);
+        //        $this->array($jobs)->isEmpty();
 
         // Create new Job.
         $job = new Job();
@@ -132,7 +131,7 @@ class JobManager extends atoum\test
         $this->string($job->getPrinterUri())->isEqualTo($printer->getUri());
         $this->string($job->getPrinterUri())->isEqualTo($printerUri);
 
-        $jobs = $jobManager->getList($printer, false);
+        //        $jobs = $jobManager->getList($printer, false);
         //        $this->array($jobs)->isNotEmpty();
     }
 
@@ -148,7 +147,6 @@ class JobManager extends atoum\test
 
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
         $jobs = $jobManager->getList($printer, false, 0, 'completed');
-
-        //        $this->array($jobs)->isNotEmpty();
+        $this->array($jobs)->isNotEmpty();
     }
 }
