@@ -76,7 +76,7 @@ class JobManager extends atoum\test
         $job->setUsername($user);
         $job->setCopies(1);
 //        $job->setPageRanges('1');
-        $job->addFile('./football.pdf');
+        $job->addFile('./helloworld.pdf');
         $job->addAttribute('media', 'A4');
         $job->addAttribute('fit-to-page', true);
         $result = $jobManager->create($printer, $job);
