@@ -342,7 +342,7 @@ class JobManager extends ManagerAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareUpdateRequest($job, $update = [], $delete = [])
+    protected function prepareUpdateRequest(JobInterface $job, $update = [], $delete = [])
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();

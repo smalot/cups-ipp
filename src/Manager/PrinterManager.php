@@ -35,13 +35,13 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param \Smalot\Cups\Model\Printer $printer
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
-     * @return \Smalot\Cups\Model\Printer
+     * @return \Smalot\Cups\Model\PrinterInterface
      */
-    public function reloadAttributes($printer)
+    public function reloadAttributes(PrinterInterface $printer)
     {
-        $request = $this->prepareReloadAttributesRequest($printer->getUri());
+        $request = $this->prepareReloadAttributesRequest($printer);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
         $values = $result->getValues();
@@ -99,13 +99,13 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param \Smalot\Cups\Model\Printer $printer
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return bool
      */
-    public function pause(Printer $printer)
+    public function pause(PrinterInterface $printer)
     {
-        $request = $this->preparePauseRequest($printer->getUri());
+        $request = $this->preparePauseRequest($printer);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -116,13 +116,13 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param \Smalot\Cups\Model\Printer $printer
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return bool
      */
-    public function resume(Printer $printer)
+    public function resume(PrinterInterface $printer)
     {
-        $request = $this->prepareResumeRequest($printer->getUri());
+        $request = $this->prepareResumeRequest($printer);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -133,13 +133,13 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param \Smalot\Cups\Model\Printer $printer
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return bool
      */
-    public function purge(Printer $printer)
+    public function purge(PrinterInterface $printer)
     {
-        $request = $this->preparePurgeRequest($printer->getUri());
+        $request = $this->preparePurgeRequest($printer);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -174,19 +174,20 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareReloadAttributesRequest($uri)
+    protected function prepareReloadAttributesRequest(PrinterInterface $printer)
     {
         $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $username = $this->buildUsername();
 
-        $printerUri = $this->buildProperty('printer-uri', $uri);
-        $printerAttributes = $this->buildPrinterAttributes();
+        $printerUri = $this->buildProperty('printer-uri', $printer->getUri());
+        // @todo
+        $printerAttributes = '';//$this->buildPrinterAttributes();
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x0b) // Print-URI | operation-id
@@ -232,18 +233,18 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function preparePauseRequest($uri)
+    protected function preparePauseRequest(PrinterInterface $printer)
     {
         $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $username = $this->buildUsername();
 
-        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $printerUri = $this->buildProperty('printer-uri', $printer->getUri());
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x10) // Pause-Printer | operation-id
@@ -261,18 +262,18 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareResumeRequest($uri)
+    protected function prepareResumeRequest(PrinterInterface $printer)
     {
         $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $username = $this->buildUsername();
 
-        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $printerUri = $this->buildProperty('printer-uri', $printer->getUri());
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x11) // Resume-Printer | operation-id
@@ -290,18 +291,18 @@ class PrinterManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function preparePurgeRequest($uri)
+    protected function preparePurgeRequest(PrinterInterface $printer)
     {
         $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $username = $this->buildUsername();
 
-        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $printerUri = $this->buildProperty('printer-uri', $printer->getUri());
         $purgeJob = $this->buildProperty('purge-jobs', 1);
 
         $content = $this->getVersion() // 1.1  | version-number
@@ -381,39 +382,5 @@ class PrinterManager extends ManagerAbstract
         $printer->setAttributes($attributes);
 
         return $printer;
-    }
-
-    /**
-     * @return string
-     */
-    protected function buildPrinterAttributes()
-    {
-        $attributes = '';
-
-        //        foreach ($this->printerTags as $key => $values) {
-        //            $item = 0;
-        //
-        //            if (array_key_exists('value', $values)) {
-        //                foreach ($values['value'] as $item_value) {
-        //                    if ($item == 0) {
-        //                        $attributes .=
-        //                          $values['tag']
-        //                          .$this->builder->formatStringLength($key)
-        //                          .$key
-        //                          .$this->builder->formatStringLength($item_value)
-        //                          .$item_value;
-        //                    } else {
-        //                        $attributes .=
-        //                          $values['tag']
-        //                          .$this->builder->formatStringLength('')
-        //                          .$this->builder->formatStringLength($item_value)
-        //                          .$item_value;
-        //                    }
-        //                    $item++;
-        //                }
-        //            }
-        //        }
-
-        return $attributes;
     }
 }
