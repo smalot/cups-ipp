@@ -31,4 +31,4 @@ script:
   # Test PDF Printer
   - lp -d PDF LICENSE && sleep 10
   # Run Tests
-  - ./vendor/bin/atoum -d tests/ -ncc
+  - ./vendor/bin/atoum -d tests/ -ncc -utr
