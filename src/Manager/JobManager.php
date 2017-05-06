@@ -117,7 +117,7 @@ class JobManager extends ManagerAbstract
         }
 
         // Refresh attributes.
-        $this->reloadAttributes($job);
+        //$this->reloadAttributes($job);
 
         return $success;
     }
@@ -237,7 +237,7 @@ class JobManager extends ManagerAbstract
         $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $username = $this->buildUsername('sebastien');
+        $username = $this->buildUsername();
 
         $printerUri = $this->buildProperty('printer-uri', $uri);
         $metaLimit = $this->buildProperty('limit', $limit, true);
@@ -380,10 +380,10 @@ class JobManager extends ManagerAbstract
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
-        $username = $this->buildUsername($job->getUsername());
-        $jobUri = $this->buildJobURI($job->getUri());
-        $copies = $this->buildCopies($job->getCopies());
-        $sides = $this->buildSides($job->getSides());
+        $username = $this->buildUsername();
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
+        $copies = $this->buildProperty('copies', $job->getCopies());
+        $sides = $this->buildProperty('sides', $job->getSides());
         $pageRanges = $this->buildPageRanges($job->getPageRanges());
 
         $jobAttributes = $this->buildJobAttributes($update);
@@ -423,18 +423,18 @@ class JobManager extends ManagerAbstract
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
-        $username = $this->buildUsername($job->getUsername());
+        $username = $this->buildUsername();
         $printerUri = $this->buildProperty('printer-uri', $uri);
-        $jobName = $this->buildJobName($job->getName());
-        $fidelity = $this->buildFidelity($job->getFidelity());
-        $timeoutAttribute = $this->buildTimeout($timeout);
-        $copies = $this->buildCopies($job->getCopies());
-        $sides = $this->buildSides($job->getSides());
+        $jobName = $this->buildProperty('job-name', $job->getName());
+        $fidelity = $this->buildProperty('ipp-attribute-fidelity', $job->getFidelity());
+        $timeoutAttribute = $this->buildProperty('multiple-operation-time-out', $timeout);
+        $copies = $this->buildProperty('copies', $job->getCopies());
+        $sides = $this->buildProperty('sides', $job->getSides());
         $pageRanges = $this->buildPageRanges($job->getPageRanges());
 
         // todo
         $operationAttributes = '';//$this->buildOperationAttributes();
-        $jobAttributes = $this->buildJobAttributes($job->getAttributes());
+        $jobAttributes = $this->buildProperties($job->getAttributes());
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x05) // Create-Job | operation-id
@@ -621,17 +621,19 @@ class JobManager extends ManagerAbstract
      */
     protected function prepareSendPartRequest(JobInterface $job, $part, $isLast = false)
     {
+        $operationId = $this->buildOperationId();
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
-        $operationId = $this->buildOperationId();
+        $username = $this->buildUsername();
+
         $jobUri = $this->buildProperty('job-uri', $job->getUri());
-        $username = $this->buildUsername($job->getUsername());
-        $documentName = $this->buildDocumentName($part['name']);
-        $fidelity = $this->buildFidelity($job->getFidelity());
-        $mimeMediaType = $this->buildMimeMediaType($part['mimeType']);
+        $documentName = $this->buildProperty('document-name', $part['name']);
+        $fidelity = $this->buildProperty('ipp-attribute-fidelity', $job->getFidelity(), true);
+        $mimeMediaType = $this->buildProperty('document-format', $part['mimeType'], true);
+
         // @todo
         $operationAttributes = '';//$this->buildOperationAttributes();
-        $lastDocument = $this->buildLastDocument($isLast);
+        $lastDocument = $this->buildProperty('last-document', $isLast);
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x06) // Send-Document | operation-id
@@ -657,8 +659,6 @@ class JobManager extends ManagerAbstract
             $content .= $part['text'];
             $content .= chr(0x0c); // datatail
         }
-
-        file_put_contents('dump2', $content);
 
         $headers = ['Content-Type' => 'application/ipp'];
 
@@ -699,132 +699,11 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $jobName
-     * @param bool $absolute
-     *
-     * @return string
-     */
-    protected function buildJobName($jobName, $absolute = false)
-    {
-        static $counter = 0;
-
-        $value = '';
-
-        if ($jobName) {
-            $jobName .= ($absolute ? '' : date('-H:i:s-').str_pad(++$counter, 4, '0', STR_PAD_LEFT));
-            $value = chr(0x42) // nameWithoutLanguage type || value-tag
-              .$this->builder->formatStringLength('job-name') //  name-length
-              .'job-name' //  job-name || name
-              .$this->builder->formatStringLength($jobName) // value-length
-              .$jobName; // value
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param int $fidelity
-     *
-     * @return string
-     */
-    protected function buildFidelity($fidelity)
-    {
-        $value = '';
-
-        if ($fidelity) {
-            $value = chr(0x22) // boolean type  |  value-tag
-              .$this->builder->formatStringLength('ipp-attribute-fidelity') //                  name-length
-              .'ipp-attribute-fidelity' // ipp-attribute-fidelity | name
-              .chr(0x00).chr(0x01) //  value-length
-              .chr(0x01); //  true | value
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param int $timeout
-     *
-     * @return string
-     */
-    protected function buildTimeout($timeout)
-    {
-        $value = '';
-
-        if ($timeout) {
-            $integer = $this->builder->formatInteger($timeout);
-            $value = chr(0x21) // integer
-              .$this->builder->formatStringLength('multiple-operation-time-out')
-              .'multiple-operation-time-out'
-              .$this->builder->formatStringLength($integer)
-              .$integer;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param int $copies
-     *
-     * @return string
-     */
-    protected function buildCopies($copies)
-    {
-        $value = '';
-
-        if ($copies && $copies > 1) {
-            $integer = $this->builder->formatInteger($copies);
-            $value = chr(0x21) // integer type | value-tag
-              .$this->builder->formatStringLength('copies') //             name-length
-              .'copies' // copies    |             name
-              .$this->builder->formatStringLength($integer) // value-length
-              .$integer;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param int $sides
-     *
-     * @return string
-     */
-    protected function buildSides($sides)
-    {
-        $value = '';
-
-        if ($sides) {
-            switch ($sides) {
-                case 2:
-                    $sides = 'two-sided-long-edge';
-                    break;
-
-                case 3:
-                    $sides = 'two-sided-short-edge';
-                    break;
-
-                case 1:
-                default:
-                    $sides = 'one-sided';
-                    break;
-            }
-
-            $value = chr(0x44) // keyword type | value-tag
-              .$this->builder->formatStringLength('sides') //        name-length
-              .'sides' // sides |             name
-              .$this->builder->formatStringLength($sides) //               value-length
-              .$sides; // one-sided |          value
-        }
-
-        return $value;
-    }
-
-    /**
      * @param string $pageRanges
      *
      * @return string
      */
-    protected function buildPageRanges($pageRanges)
+    private function buildPageRanges($pageRanges)
     {
         $value = '';
 
@@ -856,69 +735,12 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param bool $isLast
-     *
-     * @return string
-     */
-    protected function buildLastDocument($isLast)
-    {
-        $isLast = ($isLast ? chr(0x01) : chr(0x00));
-        $value = chr(0x22) // boolean
-          .$this->builder->formatStringLength('last-document')
-          .'last-document'
-          .$this->builder->formatStringLength($isLast)
-          .$isLast;
-
-        return $value;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function buildDocumentName($name)
-    {
-        $value = '';
-
-        if ($name) {
-            $value = chr(0x41) // textWithoutLanguage tag
-              .$this->builder->formatStringLength('document-name')
-              .'document-name' // mimeMediaType
-              .$this->builder->formatStringLength($name)
-              .$name; // value
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param string $mimeType
-     *
-     * @return string
-     */
-    protected function buildMimeMediaType($mimeType)
-    {
-        $value = '';
-
-        if ($mimeType) {
-            $value = chr(0x49) // document-format tag
-              .$this->builder->formatStringLength('document-format')
-              .'document-format' //
-              .$this->builder->formatStringLength($mimeType)
-              .$mimeType; // value
-        }
-
-        return $value;
-    }
-
-    /**
      * @param array $attributes
      * @param string $string
      *
      * @return string
      */
-    protected function buildJobAttributes($attributes = [], $string = '')
+    private function buildJobAttributes($attributes = [], $string = '')
     {
         foreach ($attributes as $key => $values) {
             if (!is_array($values)) {
@@ -957,7 +779,7 @@ class JobManager extends ManagerAbstract
      *
      * @return array|bool
      */
-    protected function buildJobAttribute($name, $values = [])
+    private function buildJobAttribute($name, $values = [])
     {
         $tagType = $this->jobTags[$name]['tag'];
         $attributes = ['tag' => $this->tagsTypes[$tagType]['tag'], 'values' => []];

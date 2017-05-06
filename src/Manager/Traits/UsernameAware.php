@@ -40,11 +40,11 @@ trait UsernameAware
      *
      * @return string
      */
-    protected function buildUsername($username = '')
+    protected function buildUsername()
     {
         $metaUsername = '';
 
-        if ($username) {
+        if ($username = $this->getUsername()) {
             $metaUsername = chr(0x42) // keyword type || value-tag
               .chr(0x00).chr(0x14) // name-length
               .'requesting-user-name'

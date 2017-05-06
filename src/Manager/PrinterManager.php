@@ -2,8 +2,6 @@
 
 namespace Smalot\Cups\Manager;
 
-use Http\Client\HttpClient;
-use Smalot\Cups\Builder\Builder;
 use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Model\PrinterInterface;
 use Smalot\Cups\Transport\Response as CupsResponse;
@@ -305,9 +303,6 @@ class PrinterManager extends ManagerAbstract
 
         $printerUri = $this->buildProperty('printer-uri', $uri);
         $purgeJob = $this->buildProperty('purge-jobs', 1);
-
-        // Needs a dedicated build function call.
-        $message = '';
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x12) // purge-Jobs | operation-id

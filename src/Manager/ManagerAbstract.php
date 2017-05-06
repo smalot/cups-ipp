@@ -64,6 +64,16 @@ class ManagerAbstract
     }
 
     /**
+     * @param array $properties
+     *
+     * @return string
+     */
+    public function buildProperties($properties = [])
+    {
+        return $this->builder->buildProperties($properties);
+    }
+
+    /**
      * @return string
      */
     public function getVersion()

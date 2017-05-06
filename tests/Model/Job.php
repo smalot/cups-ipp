@@ -30,7 +30,7 @@ class Job extends atoum\test
         $job->addAttribute('margin', 9);
 
         $job->addText('simple text', 'no name');
-        $job->addFile('filename.ext', 'my file', 'text/plain');
+        $job->addFile('filename.ext', 'my file', 'application/pdf');
 
         $this->integer($job->getId())->isEqualTo(1);
         $this->string($job->getName())->isEqualTo('Job #1');
@@ -52,7 +52,7 @@ class Job extends atoum\test
             'type' => 'text',
             'text' => 'simple text',
             'name' => 'no name',
-            'mimeType' => '',
+            'mimeType' => 'text/plain',
           ]
         );
         $this->array($content[1])->isEqualTo(
@@ -60,7 +60,7 @@ class Job extends atoum\test
             'type' => 'file',
             'filename' => 'filename.ext',
             'name' => 'my file',
-            'mimeType' => 'text/plain',
+            'mimeType' => 'application/pdf',
           ]
         );
     }

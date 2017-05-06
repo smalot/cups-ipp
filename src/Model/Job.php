@@ -16,6 +16,12 @@ class Job implements JobInterface
 
     const CONTENT_TEXT = 'text';
 
+    const SIDES_TWO_SIDED_LONG_EDGE = 'two-sided-long-edge';
+
+    const SIDES_TWO_SIDED_SHORT_EDGE = 'two-sided-short-edge';
+
+    const SIDES_ONE_SIDED = 'one-sided';
+
     /**
      * @var int
      */
@@ -75,6 +81,15 @@ class Job implements JobInterface
      * @var string
      */
     protected $stateReason;
+
+    /**
+     * Job constructor.
+     */
+    public function __construct()
+    {
+        $this->copies = 1;
+        $this->sides = self::SIDES_ONE_SIDED;
+    }
 
     /**
      * @return int
@@ -221,7 +236,7 @@ class Job implements JobInterface
      */
     public function getSides()
     {
-        return $this->sides;
+        return ($this->sides ?: self::SIDES_ONE_SIDED);
     }
 
     /**
@@ -290,15 +305,16 @@ class Job implements JobInterface
     /**
      * @param string $text
      * @param string $name
+     * @param string $mimeType
      *
      * @return Job
      */
-    public function addText($text, $name = '')
+    public function addText($text, $name = '', $mimeType = 'text/plain')
     {
         $this->content[] = [
           'type' => self::CONTENT_TEXT,
           'name' => $name,
-          'mimeType' => '',
+          'mimeType' => $mimeType,
           'text' => $text,
         ];
 

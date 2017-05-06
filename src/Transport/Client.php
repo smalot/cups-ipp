@@ -125,11 +125,11 @@ class Client implements HttpClient
     }
 
     /**
-     * @return Client
+     * @return self
      */
     public static function create()
     {
-        return new self(
+        return new static(
           [
             'remote_socket' => self::SOCKET_URL,
           ]

@@ -15,6 +15,7 @@ use Smalot\Cups\Transport\Client;
  */
 class JobManager extends atoum\test
 {
+
     public function testJobManager()
     {
         $builder = new Builder();
@@ -48,16 +49,19 @@ class JobManager extends atoum\test
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
         $jobs = $jobManager->getList($printer, false, 0, 'completed');
 
-//        $this->array($jobs)->isEmpty();
+        //        $this->array($jobs)->isEmpty();
     }
 
-    public function testCreateJob()
+    public function testCreateFileJob()
     {
         $user = getenv('USER');
+        $password = getenv('PASS');
         $printerUri = 'ipp://localhost:631/printers/PDF';
 
         $builder = new Builder();
+        /** @var Client $client */
         $client = Client::create();
+        $client->setAuthentication($user, $password);
 
         $printer = new Printer();
         $printer->setUri($printerUri);
@@ -68,22 +72,68 @@ class JobManager extends atoum\test
 
         // Create new Job.
         $job = new Job();
-        $job->setId(0);
-        $job->setName('Job create test');
+        $job->setName('job create file');
         $job->setUsername($user);
         $job->setCopies(1);
-        $job->setPageRanges('1');
-        $job->addText('hello world', 'hello');
+//        $job->setPageRanges('1');
+        $job->addFile('./football.pdf');
+        $job->addAttribute('media', 'A4');
+        $job->addAttribute('fit-to-page', true);
         $result = $jobManager->create($printer, $job);
+
+        sleep(5);
+        $jobManager->reloadAttributes($job);
 
         $this->boolean($result)->isTrue();
         $this->integer($job->getId())->isGreaterThan(0);
-        $this->string($job->getState())->isEqualTo('processing'); // completed ?
+        $this->string($job->getState())->isEqualTo('completed');
         $this->string($job->getPrinterUri())->isEqualTo($printer->getUri());
         $this->string($job->getPrinterUri())->isEqualTo($printerUri);
 
         $jobs = $jobManager->getList($printer, false);
-//        $this->array($jobs)->isNotEmpty();
+        // $this->array($jobs)->isNotEmpty();
+    }
+
+    public function testCreateTextJob()
+    {
+        $user = getenv('USER');
+        $password = getenv('PASS');
+        $printerUri = 'ipp://localhost:631/printers/PDF';
+
+        $builder = new Builder();
+        /** @var Client $client */
+        $client = Client::create();
+        $client->setAuthentication($user, $password);
+
+        $printer = new Printer();
+        $printer->setUri($printerUri);
+
+        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobs = $jobManager->getList($printer, false);
+        $this->array($jobs)->isEmpty();
+
+        // Create new Job.
+        $job = new Job();
+        $job->setName('job create text');
+        $job->setUsername($user);
+        $job->setCopies(1);
+        $job->setPageRanges('1');
+        $job->addText('hello world', 'hello');
+        $job->addAttribute('media', 'A4');
+        $job->addAttribute('fit-to-page', true);
+        $result = $jobManager->create($printer, $job);
+
+        sleep(5);
+        $jobManager->reloadAttributes($job);
+
+        $this->boolean($result)->isTrue();
+        $this->integer($job->getId())->isGreaterThan(0);
+        $this->string($job->getState())->isEqualTo('completed');
+        $this->string($job->getPrinterUri())->isEqualTo($printer->getUri());
+        $this->string($job->getPrinterUri())->isEqualTo($printerUri);
+
+        $jobs = $jobManager->getList($printer, false);
+        //        $this->array($jobs)->isNotEmpty();
     }
 
     public function testGetList()
@@ -99,6 +149,6 @@ class JobManager extends atoum\test
         $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
         $jobs = $jobManager->getList($printer, false, 0, 'completed');
 
-//        $this->array($jobs)->isNotEmpty();
+        //        $this->array($jobs)->isNotEmpty();
     }
 }
