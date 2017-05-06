@@ -35,7 +35,7 @@ class JobManager extends ManagerAbstract
       $whichJobs = 'not-completed',
       $subset = false
     ) {
-        $request = $this->prepareGetListRequest($printer->getUri(), $myJobs, $limit, $whichJobs, $subset);
+        $request = $this->prepareGetListRequest($printer, $myJobs, $limit, $whichJobs, $subset);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
         $values = $result->getValues();
@@ -64,7 +64,7 @@ class JobManager extends ManagerAbstract
     public function reloadAttributes(JobInterface $job, $subset = false, $attributesGroup = 'all')
     {
         if ($job->getUri()) {
-            $request = $this->prepareReloadAttributesRequest($job->getUri(), $subset, $attributesGroup);
+            $request = $this->prepareReloadAttributesRequest($job, $subset, $attributesGroup);
             $response = $this->client->sendRequest($request);
             $result = CupsResponse::parseResponse($response);
             $values = $result->getValues();
@@ -78,7 +78,7 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param PrinterInterface $printer
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      * @param JobInterface $job
      * @param int $timeout
      *
@@ -87,7 +87,7 @@ class JobManager extends ManagerAbstract
     public function create(PrinterInterface $printer, JobInterface $job, $timeout = 60)
     {
         // Create job.
-        $request = $this->prepareCreateRequest($printer->getUri(), $job, $timeout);
+        $request = $this->prepareCreateRequest($printer, $job, $timeout);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
         $values = $result->getValues();
@@ -115,9 +115,6 @@ class JobManager extends ManagerAbstract
                 }
             }
         }
-
-        // Refresh attributes.
-        //$this->reloadAttributes($job);
 
         return $success;
     }
@@ -148,7 +145,7 @@ class JobManager extends ManagerAbstract
      */
     public function cancel(JobInterface $job)
     {
-        $request = $this->prepareCancelRequest($job->getUri());
+        $request = $this->prepareCancelRequest($job);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -165,7 +162,7 @@ class JobManager extends ManagerAbstract
      */
     public function release(JobInterface $job)
     {
-        $request = $this->prepareReleaseRequest($job->getUri());
+        $request = $this->prepareReleaseRequest($job);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -191,7 +188,7 @@ class JobManager extends ManagerAbstract
      */
     public function hold(JobInterface $job, $until = 'indefinite')
     {
-        $request = $this->prepareHoldRequest($job->getUri(), $until);
+        $request = $this->prepareHoldRequest($job, $until);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -208,7 +205,7 @@ class JobManager extends ManagerAbstract
      */
     public function restart(JobInterface $job)
     {
-        $request = $this->prepareRestartRequest($job->getUri());
+        $request = $this->prepareRestartRequest($job);
         $response = $this->client->sendRequest($request);
         $result = CupsResponse::parseResponse($response);
 
@@ -219,7 +216,7 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      * @param bool $myJobs
      * @param int $limit
      * @param string $whichJobs
@@ -228,7 +225,7 @@ class JobManager extends ManagerAbstract
      * @return \GuzzleHttp\Psr7\Request
      */
     protected function prepareGetListRequest(
-      $uri,
+      PrinterInterface $printer,
       $myJobs = true,
       $limit = 0,
       $whichJobs = 'not-completed',
@@ -239,7 +236,7 @@ class JobManager extends ManagerAbstract
         $language = $this->buildLanguage();
         $username = $this->buildUsername();
 
-        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $printerUri = $this->buildProperty('printer-uri', $printer->getUri());
         $metaLimit = $this->buildProperty('limit', $limit, true);
         $metaMyJobs = $this->buildProperty('my-jobs', $myJobs, true);
 
@@ -262,28 +259,16 @@ class JobManager extends ManagerAbstract
           .$metaMyJobs;
 
         if ($subset) {
-            $content .=
-              chr(0x44) // keyword
-              .$this->builder->formatStringLength('requested-attributes')
-              .'requested-attributes'
-              .$this->builder->formatStringLength('job-uri')
-              .'job-uri'
-              .chr(0x44) // keyword
-              .$this->builder->formatStringLength('')
-              .''
-              .$this->builder->formatStringLength('job-name')
-              .'job-name'
-              .chr(0x44) // keyword
-              .$this->builder->formatStringLength('')
-              .''
-              .$this->builder->formatStringLength('job-state')
-              .'job-state'
-              .chr(0x44) // keyword
-              .$this->builder->formatStringLength('')
-              .''
-              .$this->builder->formatStringLength('job-state-reason')
-              .'job-state-reason';
-        } else { # cups 1.4.4 doesn't return much of anything without this
+            $attributesGroup = [
+              'job-uri',
+              'job-name',
+              'job-state',
+              'job-state-reason',
+            ];
+
+            $content .= $this->buildProperty('requested-attributes', $attributesGroup);
+        } else {
+            // Cups 1.4.4 doesn't return much of anything without this.
             $content .= $this->buildProperty('requested-attributes', 'all');
         }
 
@@ -295,19 +280,19 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\JobInterface $job
      * @param bool $subset
      * @param string $attributesGroup
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareReloadAttributesRequest($uri, $subset = false, $attributesGroup = 'all')
+    protected function prepareReloadAttributesRequest(JobInterface $job, $subset = false, $attributesGroup = 'all')
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildProperty('job-uri', $uri);
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
 
         $content = $this->getVersion() // 1.1  | version-number
           .chr(0x00).chr(0x09) // Get-Job-Attributes | operation-id
@@ -319,27 +304,14 @@ class JobManager extends ManagerAbstract
           .$username;
 
         if ($subset) {
-            $content .=
-              chr(0x44) // keyword
-              .$this->builder->formatStringLength('requested-attributes')
-              .'requested-attributes'
-              .$this->builder->formatStringLength('job-uri')
-              .'job-uri'
-              .chr(0x44) // keyword
-              .$this->builder->formatStringLength('')
-              .''
-              .$this->builder->formatStringLength('job-name')
-              .'job-name'
-              .chr(0x44) // keyword
-              .$this->builder->formatStringLength('')
-              .''
-              .$this->builder->formatStringLength('job-state')
-              .'job-state'
-              .chr(0x44) // keyword
-              .$this->builder->formatStringLength('')
-              .''
-              .$this->builder->formatStringLength('job-state-reason')
-              .'job-state-reason';
+            $attributesGroup = [
+              'job-uri',
+              'job-name',
+              'job-state',
+              'job-state-reason',
+            ];
+
+            $content .= $this->buildProperty('requested-attributes', $attributesGroup);
         } elseif ($attributesGroup) {
             switch ($attributesGroup) {
                 case 'job-template':
@@ -349,17 +321,12 @@ class JobManager extends ManagerAbstract
                 case 'all':
                     break;
                 default:
-                    trigger_error(_('not a valid attribute group: ').$attributesGroup, E_USER_NOTICE);
+                    trigger_error('Invalid attribute group: "'.$attributesGroup.'"', E_USER_NOTICE);
                     $attributesGroup = '';
                     break;
             }
 
-            $content .=
-              chr(0x44) // keyword
-              .$this->builder->formatStringLength('requested-attributes')
-              .'requested-attributes'
-              .$this->builder->formatStringLength($attributesGroup)
-              .$attributesGroup;
+            $content .= $this->buildProperty('requested-attributes', $attributesGroup);
         }
         $content .= chr(0x03); // end-of-attributes | end-of-attributes-tag
 
@@ -386,7 +353,7 @@ class JobManager extends ManagerAbstract
         $sides = $this->buildProperty('sides', $job->getSides());
         $pageRanges = $this->buildPageRanges($job->getPageRanges());
 
-        $jobAttributes = $this->buildJobAttributes($update);
+        $jobAttributes = $this->buildProperties($update);
 
         $deletedAttributes = '';
 
@@ -412,19 +379,19 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\PrinterInterface $printer
      * @param JobInterface $job
      * @param int $timeout
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareCreateRequest($uri, JobInterface $job, $timeout = 60)
+    protected function prepareCreateRequest(PrinterInterface $printer, JobInterface $job, $timeout = 60)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $printerUri = $this->buildProperty('printer-uri', $uri);
+        $printerUri = $this->buildProperty('printer-uri', $printer->getUri());
         $jobName = $this->buildProperty('job-name', $job->getName());
         $fidelity = $this->buildProperty('ipp-attribute-fidelity', $job->getFidelity());
         $timeoutAttribute = $this->buildProperty('multiple-operation-time-out', $timeout);
@@ -461,17 +428,17 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\JobInterface $job
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareCancelRequest($uri)
+    protected function prepareCancelRequest(JobInterface $job)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildProperty('job-uri', $uri);
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
 
         // Needs a build function call.
         $requestBodyMalformed = '';
@@ -495,17 +462,17 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\JobInterface $job
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareReleaseRequest($uri)
+    protected function prepareReleaseRequest(JobInterface $job)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildProperty('job-uri', $uri);
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
 
         // Needs a build function call.
         $message = '';
@@ -527,18 +494,18 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\JobInterface $job
      * @param string $until
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareHoldRequest($uri, $until = 'indefinite')
+    protected function prepareHoldRequest(JobInterface $job, $until = 'indefinite')
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildProperty('job-uri', $uri);
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
 
         // Needs a build function call.
         $message = '';
@@ -581,17 +548,17 @@ class JobManager extends ManagerAbstract
     }
 
     /**
-     * @param string $uri
+     * @param \Smalot\Cups\Model\JobInterface $job
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareRestartRequest($uri)
+    protected function prepareRestartRequest(JobInterface $job)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
         $operationId = $this->buildOperationId();
         $username = $this->buildUsername();
-        $jobUri = $this->buildProperty('job-uri', $uri);
+        $jobUri = $this->buildProperty('job-uri', $job->getUri());
 
         // Needs a build function call.
         $message = '';
@@ -686,9 +653,24 @@ class JobManager extends ManagerAbstract
         if (isset($item['job-printer-uri'][0])) {
             $job->setPrinterUri($item['job-printer-uri'][0]);
         }
+
         if (isset($item['job-originating-user-name'][0])) {
             $job->setUsername($item['job-originating-user-name'][0]);
         }
+
+        if (isset($item['page-ranges'][0])) {
+            $job->setPageRanges($item['page-ranges'][0]);
+        }
+
+        unset($item['job-id']);
+        unset($item['job-uri']);
+        unset($item['job-name']);
+        unset($item['job-state']);
+        unset($item['job-state-reasons']);
+        unset($item['number-up']);
+        unset($item['page-range']);
+        unset($item['job-printer-uri']);
+        unset($item['job-originating-user-name']);
 
         // Merge with attributes already set.
         $attributes = $job->getAttributes();
@@ -705,132 +687,9 @@ class JobManager extends ManagerAbstract
      */
     private function buildPageRanges($pageRanges)
     {
-        $value = '';
+        $pageRanges = trim(str_replace('-', ':', $pageRanges));
+        $pageRanges = explode(',', $pageRanges);
 
-        if ($pageRanges) {
-            $pageRanges = trim(str_replace('-', ':', $pageRanges));
-            $first = true;
-            $ranges = explode(',', $pageRanges);
-
-            foreach ($ranges as $range) {
-                $tmp = $this->builder->formatRangeOfInteger($range);
-
-                if ($first) {
-                    $value .= chr(0x33)
-                      .$this->builder->formatStringLength('page-ranges')
-                      .'page-ranges'
-                      .$this->builder->formatStringLength($tmp)
-                      .$tmp;
-                } else {
-                    $value .= chr(0x33)
-                      .$this->builder->formatStringLength('')
-                      .$this->builder->formatStringLength($tmp)
-                      .$tmp;
-                    $first = false;
-                }
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param array $attributes
-     * @param string $string
-     *
-     * @return string
-     */
-    private function buildJobAttributes($attributes = [], $string = '')
-    {
-        foreach ($attributes as $key => $values) {
-            if (!is_array($values)) {
-                $values = [$values];
-            }
-            if ($values = $this->buildJobAttribute($key, $values)) {
-                $first = true;
-
-                foreach ($values['values'] as $item_value) {
-                    if ($first) {
-                        $string .=
-                          $values['tag']
-                          .$this->builder->formatStringLength($key)
-                          .$key
-                          .$this->builder->formatStringLength($item_value)
-                          .$item_value;
-                    } else {
-                        $string .=
-                          $values['tag']
-                          .$this->builder->formatStringLength('')
-                          .$this->builder->formatStringLength($item_value)
-                          .$item_value;
-                    }
-
-                    $first = false;
-                }
-            }
-        }
-
-        return $string;
-    }
-
-    /**
-     * @param string $name
-     * @param array $values
-     *
-     * @return array|bool
-     */
-    private function buildJobAttribute($name, $values = [])
-    {
-        $tagType = $this->jobTags[$name]['tag'];
-        $attributes = ['tag' => $this->tagsTypes[$tagType]['tag'], 'values' => []];
-
-        foreach ($values as $value) {
-            switch ($tagType) {
-                case 'integer':
-                    if (is_bool($value)) {
-                        $value = intval($value);
-                    }
-                    $attributes['values'][] = $this->builder->formatInteger($value);
-                    break;
-
-                case 'nameWithoutLanguage':
-                case 'nameWithLanguage':
-                case 'textWithoutLanguage':
-                case 'textWithLanguage':
-                case 'keyword':
-                case 'naturalLanguage':
-                    $attributes['values'][] = $value;
-                    break;
-
-                case 'enum':
-                    //                     $value = $this->buildEnum($name, $value); // may be overwritten by children
-                    $attributes['values'][] = $value;
-                    break;
-
-                case 'rangeOfInteger':
-                    // $value have to be: INT1:INT2 , eg 100:1000
-                    $attributes['values'][] = $this->buildRangeOfInteger($value);
-                    break;
-
-                case 'resolution':
-                    $unit = '';
-                    if (preg_match('/dpi/', $value)) {
-                        $unit = chr(0x3);
-                    }
-                    if (preg_match('/dpc/', $value)) {
-                        $unit = chr(0x4);
-                    }
-                    $search = ['/(dpi|dpc)/', '/(x|-)/'];
-                    $replace = ['', ':'];
-                    $value = $this->buildRangeOfInteger(preg_replace($search, $replace, $value)).$unit;
-                    $attributes['values'][] = $value;
-                    break;
-
-                default:
-                    return false;
-            }
-        }
-
-        return $attributes;
+        return $this->buildProperty('page-ranges', $pageRanges);
     }
 }

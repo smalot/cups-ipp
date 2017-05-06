@@ -40,5 +40,7 @@ print-quality:
     tag: 'enum'
 printer-resolution:
     tag: 'resolution'
+requested-attributes:
+    tag: 'keyword'
 sides:
     tag: 'keyword'

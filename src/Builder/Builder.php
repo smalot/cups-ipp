@@ -147,42 +147,6 @@ class Builder
     }
 
     /**
-     * @return string
-     */
-    public function buildOperationAttributes()
-    {
-        $attributes = '';
-
-        foreach ($this->operationTags as $key => $values) {
-            $item = 0;
-
-            if (array_key_exists('value', $values)) {
-                foreach ($values['value'] as $item_value) {
-                    if ($item == 0) {
-                        $attributes .=
-                          $values['systag']
-                          .$this->formatStringLength($key)
-                          .$key
-                          .$this->formatStringLength($item_value)
-                          .$item_value;
-                    } else {
-                        $attributes .=
-                          $values['systag']
-                          .$this->formatStringLength('')
-                          .$this->formatStringLength($item_value)
-                          .$item_value;
-                    }
-                    $item++;
-                }
-            }
-        }
-
-        reset($this->operationTags);
-
-        return $attributes;
-    }
-
-    /**
      * @param array $properties
      *
      * @return string
