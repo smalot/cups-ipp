@@ -22,7 +22,7 @@ Then, require the `vendor/autoload.php` file to enable the autoloading mechanism
 Otherwise, your application won't be able to find the classes of this component.
 
 
-# Requirements
+## Requirements
 
 This library use unix sock connection: `unix:///var/run/cups/cups.sock`
 
