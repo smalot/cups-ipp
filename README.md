@@ -2,6 +2,15 @@
 
 CUPS Implementation of IPP - PHP Client API
 
+[![Build Status](https://travis-ci.org/smalot/cups-ipp.png?branch=master)](https://travis-ci.org/smalot/cups-ipp)
+[![Current Version](https://poser.pugx.org/smalot/cups-ipp/v/stable.png)](https://packagist.org/packages/smalot/cups-ipp)
+[![HHVM Status](http://hhvm.h4cc.de/badge/smalot/cups-ipp.png)](http://hhvm.h4cc.de/package/smalot/cups-ipp)
+[![composer.lock](https://poser.pugx.org/smalot/cups-ipp/composerlock)](https://packagist.org/packages/smalot/cups-ipp)
+
+[![Total Downloads](https://poser.pugx.org/smalot/cups-ipp/downloads.png)](https://packagist.org/packages/smalot/cups-ipp)
+[![Monthly Downloads](https://poser.pugx.org/smalot/cups-ipp/d/monthly)](https://packagist.org/packages/smalot/cups-ipp)
+[![Daily Downloads](https://poser.pugx.org/smalot/cups-ipp/d/daily)](https://packagist.org/packages/smalot/cups-ipp)
+
 
 ## Install via Composer
 
@@ -22,7 +31,8 @@ First of all, check if you have correct access to this file: `/var/run/cups/cups
 
 ## Implementation
 
-List printers
+### List printers
+
 
 ````php
 <?php
