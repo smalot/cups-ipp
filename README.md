@@ -80,7 +80,7 @@ $printerManager = new PrinterManager($builder, $client, $responseParser);
 $printer = $printerManager->findByUri('ipp://localhost:631/printers/HP-Photosmart-C4380-series');
 
 $jobManager = new JobManager($builder, $client, $responseParser);
-$jobs = $jobManager->getList($printer, false,0, 'completed');
+$jobs = $jobManager->getList($printer, false, 0, 'completed');
 
 foreach ($jobs as $job) {
     echo '#'.$job->getId().' '.$job->getName().' - '.$job->getState().PHP_EOL;

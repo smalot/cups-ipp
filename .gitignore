@@ -1,4 +1,5 @@
 /coverage/
+/legacy/
 /vendor/
 /.idea/
 /tmp
