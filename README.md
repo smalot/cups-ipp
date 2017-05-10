@@ -14,6 +14,8 @@ CUPS Implementation of IPP - PHP Client API
 
 ## Install via Composer
 
+You can install the component using [Composer](https://getcomposer.org/).
+
 ````sh
 composer require smalot/cups-ipp
 ````
