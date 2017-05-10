@@ -82,7 +82,7 @@ class JobManager extends atoum\test
         $job->addFile('./helloworld.pdf');
         $job->addAttribute('media', 'A4');
         $job->addAttribute('fit-to-page', true);
-        $result = $jobManager->create($printer, $job);
+        $result = $jobManager->send($printer, $job);
 
         sleep(5);
         $jobManager->reloadAttributes($job);
@@ -126,7 +126,7 @@ class JobManager extends atoum\test
         $job->addText('hello world', 'hello');
         $job->addAttribute('media', 'A4');
         $job->addAttribute('fit-to-page', true);
-        $result = $jobManager->create($printer, $job);
+        $result = $jobManager->send($printer, $job);
 
         sleep(5);
         $jobManager->reloadAttributes($job);

@@ -58,3 +58,69 @@ foreach ($printers as $printer) {
 }
 
 ````
+
+
+### List all printer's jobs
+
+````php
+<?php
+
+include 'vendor/autoload.php';
+
+use Smalot\Cups\Builder\Builder;
+use Smalot\Cups\Manager\JobManager;
+use Smalot\Cups\Manager\PrinterManager;
+use Smalot\Cups\Transport\Client;
+use Smalot\Cups\Transport\ResponseParser;
+
+$client = new Client();
+$builder = new Builder();
+$responseParser = new ResponseParser();
+
+$printerManager = new PrinterManager($builder, $client, $responseParser);
+$printer = $printerManager->findByUri('ipp://localhost:631/printers/HP-Photosmart-C4380-series');
+
+$jobManager = new JobManager($builder, $client, $responseParser);
+$jobs = $jobManager->getList($printer, false,0, 'completed');
+
+foreach ($jobs as $job) {
+    echo '#'.$job->getId().' '.$job->getName().' - '.$job->getState().PHP_EOL;
+}
+
+````
+
+
+### Create and send a new job
+
+````php
+<?php
+
+include 'vendor/autoload.php';
+
+use Smalot\Cups\Builder\Builder;
+use Smalot\Cups\Manager\JobManager;
+use Smalot\Cups\Manager\PrinterManager;
+use Smalot\Cups\Model\Job;
+use Smalot\Cups\Transport\Client;
+use Smalot\Cups\Transport\ResponseParser;
+
+$client = new Client();
+$builder = new Builder();
+$responseParser = new ResponseParser();
+
+$printerManager = new PrinterManager($builder, $client, $responseParser);
+$printer = $printerManager->findByUri('ipp://localhost:631/printers/HP-Photosmart-C4380-series');
+
+$jobManager = new JobManager($builder, $client, $responseParser);
+
+$job = new Job();
+$job->setName('job create file');
+$job->setUsername('demo');
+$job->setCopies(1);
+$job->setPageRanges('1');
+$job->addFile('./helloworld.pdf');
+$job->addAttribute('media', 'A4');
+$job->addAttribute('fit-to-page', true);
+$result = $jobManager->send($printer, $job);
+
+````

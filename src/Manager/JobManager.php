@@ -84,10 +84,10 @@ class JobManager extends ManagerAbstract
      *
      * @return bool
      */
-    public function create(PrinterInterface $printer, JobInterface $job, $timeout = 60)
+    public function send(PrinterInterface $printer, JobInterface $job, $timeout = 60)
     {
         // Create job.
-        $request = $this->prepareCreateRequest($printer, $job, $timeout);
+        $request = $this->prepareSendRequest($printer, $job, $timeout);
         $response = $this->client->sendRequest($request);
         $result = $this->parseResponse($response);
         $values = $result->getValues();
@@ -385,7 +385,7 @@ class JobManager extends ManagerAbstract
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function prepareCreateRequest(PrinterInterface $printer, JobInterface $job, $timeout = 60)
+    protected function prepareSendRequest(PrinterInterface $printer, JobInterface $job, $timeout = 60)
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
