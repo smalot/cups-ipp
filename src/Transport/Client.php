@@ -51,10 +51,24 @@ class Client implements HttpClient
     /**
      * Client constructor.
      *
+     * @param string $username
+     * @param string $password
      * @param array $socketClientOptions
      */
-    public function __construct($socketClientOptions = [])
+    public function __construct($username = null, $password = null, $socketClientOptions = [])
     {
+        if (!is_null($username)) {
+            $this->username = $username;
+        }
+
+        if (!is_null($password)) {
+            $this->password = $password;
+        }
+
+        if (empty($socketClientOptions['remote_socket'])) {
+            $socketClientOptions['remote_socket'] = self::SOCKET_URL;
+        }
+
         $messageFactory = new GuzzleMessageFactory();
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
         $host = preg_match(
@@ -122,17 +136,5 @@ class Client implements HttpClient
         }
 
         return $this->httpClient->sendRequest($request);
-    }
-
-    /**
-     * @return self
-     */
-    public static function create()
-    {
-        return new static(
-          [
-            'remote_socket' => self::SOCKET_URL,
-          ]
-        );
     }
 }

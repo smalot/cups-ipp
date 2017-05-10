@@ -11,6 +11,7 @@ class Job implements JobInterface
 {
 
     use Traits\AttributeAware;
+    use Traits\UriAware;
 
     const CONTENT_FILE = 'file';
 
@@ -26,11 +27,6 @@ class Job implements JobInterface
      * @var int
      */
     protected $id;
-
-    /**
-     * @var string
-     */
-    protected $uri;
 
     /**
      * @var string
@@ -107,26 +103,6 @@ class Job implements JobInterface
     public function setId($id)
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    /**
-     * @param string $uri
-     *
-     * @return Job
-     */
-    public function setUri($uri)
-    {
-        $this->uri = $uri;
 
         return $this;
     }

@@ -3,7 +3,9 @@
 namespace Smalot\Cups\Manager;
 
 use Http\Client\HttpClient;
+use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\Builder\Builder;
+use Smalot\Cups\Transport\ResponseParser;
 
 /**
  * Class ManagerAbstract
@@ -29,6 +31,11 @@ class ManagerAbstract
     protected $builder;
 
     /**
+     * @var \Smalot\Cups\Transport\ResponseParser
+     */
+    protected $responseParser;
+
+    /**
      * @var string
      */
     protected $version;
@@ -38,11 +45,13 @@ class ManagerAbstract
      *
      * @param \Smalot\Cups\Builder\Builder $builder
      * @param \Http\Client\HttpClient $client
+     * @param \Smalot\Cups\Transport\ResponseParser $responseParser
      */
-    public function __construct(Builder $builder, HttpClient $client)
+    public function __construct(Builder $builder, HttpClient $client, ResponseParser $responseParser)
     {
         $this->client = $client;
         $this->builder = $builder;
+        $this->responseParser = $responseParser;
         $this->version = chr(0x01).chr(0x01);
 
         $this->setCharset('us-ascii');
@@ -71,6 +80,16 @@ class ManagerAbstract
     public function buildProperties($properties = [])
     {
         return $this->builder->buildProperties($properties);
+    }
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return \Smalot\Cups\Transport\Response
+     */
+    public function parseResponse(ResponseInterface $response)
+    {
+        return $this->responseParser->parse($response);
     }
 
     /**

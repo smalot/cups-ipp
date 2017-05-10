@@ -37,7 +37,7 @@ class JobManager extends ManagerAbstract
     ) {
         $request = $this->prepareGetListRequest($printer, $myJobs, $limit, $whichJobs, $subset);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
         $values = $result->getValues();
 
         $list = [];
@@ -66,7 +66,7 @@ class JobManager extends ManagerAbstract
         if ($job->getUri()) {
             $request = $this->prepareReloadAttributesRequest($job, $subset, $attributesGroup);
             $response = $this->client->sendRequest($request);
-            $result = CupsResponse::parseResponse($response);
+            $result = $this->parseResponse($response);
             $values = $result->getValues();
 
             if (isset($values['job-attributes'][0])) {
@@ -89,7 +89,7 @@ class JobManager extends ManagerAbstract
         // Create job.
         $request = $this->prepareCreateRequest($printer, $job, $timeout);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
         $values = $result->getValues();
 
         $success = false;
@@ -107,7 +107,7 @@ class JobManager extends ManagerAbstract
             foreach ($content as $part) {
                 $request = $this->prepareSendPartRequest($job, $part, !(--$count));
                 $response = $this->client->sendRequest($request);
-                $result = CupsResponse::parseResponse($response);
+                $result = $this->parseResponse($response);
 
                 if ($result->getStatusCode() != 'successfull-ok') {
                     $success = false;
@@ -130,7 +130,7 @@ class JobManager extends ManagerAbstract
     {
         $request = $this->prepareUpdateRequest($job, $update, $delete);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Refresh attributes.
         $this->reloadAttributes($job);
@@ -147,7 +147,7 @@ class JobManager extends ManagerAbstract
     {
         $request = $this->prepareCancelRequest($job);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Refresh attributes.
         $this->reloadAttributes($job);
@@ -164,7 +164,7 @@ class JobManager extends ManagerAbstract
     {
         $request = $this->prepareReleaseRequest($job);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Refresh attributes.
         $this->reloadAttributes($job);
@@ -190,7 +190,7 @@ class JobManager extends ManagerAbstract
     {
         $request = $this->prepareHoldRequest($job, $until);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Refresh attributes.
         $this->reloadAttributes($job);
@@ -207,7 +207,7 @@ class JobManager extends ManagerAbstract
     {
         $request = $this->prepareRestartRequest($job);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Refresh attributes.
         $this->reloadAttributes($job);
@@ -685,7 +685,7 @@ class JobManager extends ManagerAbstract
      *
      * @return string
      */
-    private function buildPageRanges($pageRanges)
+    protected function buildPageRanges($pageRanges)
     {
         $pageRanges = trim(str_replace('-', ':', $pageRanges));
         $pageRanges = explode(',', $pageRanges);

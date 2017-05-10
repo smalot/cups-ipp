@@ -11,11 +11,7 @@ class Printer implements PrinterInterface
 {
 
     use Traits\AttributeAware;
-
-    /**
-     * @var string
-     */
-    protected $uri;
+    use Traits\UriAware;
 
     /**
      * @var string
@@ -26,26 +22,6 @@ class Printer implements PrinterInterface
      * @var string
      */
     protected $status;
-
-    /**
-     * @return string
-     */
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    /**
-     * @param string $uri
-     *
-     * @return Printer
-     */
-    public function setUri($uri)
-    {
-        $this->uri = $uri;
-
-        return $this;
-    }
 
     /**
      * @return string

@@ -56,23 +56,6 @@ class Response
     }
 
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return \Smalot\Cups\Transport\Response
-     */
-    public static function parseResponse(ResponseInterface $response)
-    {
-        $parser = new ResponseParser($response);
-
-        $ippVersion = $parser->getIppVersion();
-        $statusCode = $parser->getStatusCode();
-        $requestId = $parser->getRequestId();
-        $body = $parser->getBody();
-
-        return new self($ippVersion, $statusCode, $requestId, $body);
-    }
-
-    /**
      * @return string
      */
     public function getIppVersion()

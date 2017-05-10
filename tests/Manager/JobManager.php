@@ -7,6 +7,7 @@ use Smalot\Cups\Builder\Builder;
 use Smalot\Cups\Model\Job;
 use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Transport\Client;
+use Smalot\Cups\Transport\ResponseParser;
 
 /**
  * Class JobManager
@@ -19,9 +20,10 @@ class JobManager extends atoum\test
     public function testJobManager()
     {
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
+        $responseParser = new ResponseParser();
 
-        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client, $responseParser);
         $jobManager->setCharset('utf-8');
         $jobManager->setLanguage('fr-fr');
         $jobManager->setOperationId(5);
@@ -41,12 +43,13 @@ class JobManager extends atoum\test
         $printerUri = 'ipp://localhost:631/printers/PDF';
 
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
+        $responseParser = new ResponseParser();
 
         $printer = new Printer();
         $printer->setUri($printerUri);
 
-        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client, $responseParser);
         //        $jobs = $jobManager->getList($printer, false, 0, 'completed');
         //        $this->array($jobs)->isEmpty();
     }
@@ -59,13 +62,14 @@ class JobManager extends atoum\test
 
         $builder = new Builder();
         /** @var Client $client */
-        $client = Client::create();
+        $client = new Client();
         $client->setAuthentication($user, $password);
+        $responseParser = new ResponseParser();
 
         $printer = new Printer();
         $printer->setUri($printerUri);
 
-        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client, $responseParser);
         //        $jobs = $jobManager->getList($printer, false);
         //        $this->array($jobs)->isEmpty();
 
@@ -101,13 +105,14 @@ class JobManager extends atoum\test
 
         $builder = new Builder();
         /** @var Client $client */
-        $client = Client::create();
+        $client = new Client();
         $client->setAuthentication($user, $password);
+        $responseParser = new ResponseParser();
 
         $printer = new Printer();
         $printer->setUri($printerUri);
 
-        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client, $responseParser);
         $jobManager->setUsername($user);
         //        $jobs = $jobManager->getList($printer, false);
         //        $this->array($jobs)->isEmpty();
@@ -141,12 +146,13 @@ class JobManager extends atoum\test
         $printerUri = 'ipp://localhost:631/printers/PDF';
 
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
+        $responseParser = new ResponseParser();
 
         $printer = new Printer();
         $printer->setUri($printerUri);
 
-        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client);
+        $jobManager = new \Smalot\Cups\Manager\JobManager($builder, $client, $responseParser);
         //        $jobs = $jobManager->getList($printer, false, 0, 'completed');
         //        $this->array($jobs)->isNotEmpty();
     }

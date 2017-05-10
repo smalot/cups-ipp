@@ -7,6 +7,7 @@ use Smalot\Cups\Builder\Builder;
 use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Model\PrinterInterface;
 use Smalot\Cups\Transport\Client;
+use Smalot\Cups\Transport\ResponseParser;
 
 /**
  * Class PrinterManager
@@ -21,9 +22,10 @@ class PrinterManager extends atoum\test
     public function testPrinterManager()
     {
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
+        $responseParser = new ResponseParser();
 
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client, $responseParser);
         $printerManager->setCharset('utf-8');
         $printerManager->setLanguage('fr-fr');
         $printerManager->setOperationId(5);
@@ -41,9 +43,10 @@ class PrinterManager extends atoum\test
     public function testFindByUri()
     {
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
+        $responseParser = new ResponseParser();
 
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client, $responseParser);
         $printerManager->setCharset('utf-8');
         $printerManager->setLanguage('fr-fr');
         $printerManager->setOperationId(5);
@@ -61,9 +64,10 @@ class PrinterManager extends atoum\test
     public function testGetList()
     {
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
+        $responseParser = new ResponseParser();
 
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client, $responseParser);
         $printers = $printerManager->getList();
 
         $this->array($printers)->size->isGreaterThanOrEqualTo(1);
@@ -89,9 +93,11 @@ class PrinterManager extends atoum\test
         $password = getenv('PASS');
 
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
         $client->setAuthentication($user, $password);
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $responseParser = new ResponseParser();
+
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client, $responseParser);
 
         $printer = new Printer();
         $printer->setUri($this->printerUri);
@@ -116,9 +122,11 @@ class PrinterManager extends atoum\test
         $password = getenv('PASS');
 
         $builder = new Builder();
-        $client = Client::create();
+        $client = new Client();
         $client->setAuthentication($user, $password);
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $responseParser = new ResponseParser();
+
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client, $responseParser);
 
         $printer = new Printer();
         $printer->setUri($this->printerUri);
@@ -131,8 +139,10 @@ class PrinterManager extends atoum\test
     public function testGetDefault()
     {
         $builder = new Builder();
-        $client = Client::create();
-        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client);
+        $client = new Client();
+        $responseParser = new ResponseParser();
+
+        $printerManager = new \Smalot\Cups\Manager\PrinterManager($builder, $client, $responseParser);
 
         // Reset status
         $printer = $printerManager->getDefault();

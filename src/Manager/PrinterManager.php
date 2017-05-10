@@ -43,7 +43,7 @@ class PrinterManager extends ManagerAbstract
     {
         $request = $this->prepareReloadAttributesRequest($printer);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
         $values = $result->getValues();
 
         if (isset($values['printer-attributes'][0])) {
@@ -60,7 +60,7 @@ class PrinterManager extends ManagerAbstract
     {
         $request = $this->prepareGetDefaultRequest(['all']);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
         $values = $result->getValues();
 
         $printer = null;
@@ -82,7 +82,7 @@ class PrinterManager extends ManagerAbstract
     {
         $request = $this->prepareGetListRequest($attributes);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
         $values = $result->getValues();
         $list = [];
 
@@ -107,7 +107,7 @@ class PrinterManager extends ManagerAbstract
     {
         $request = $this->preparePauseRequest($printer);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Reload attributes to update printer status.
         $this->reloadAttributes($printer);
@@ -124,7 +124,7 @@ class PrinterManager extends ManagerAbstract
     {
         $request = $this->prepareResumeRequest($printer);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         // Reload attributes to update printer status.
         $this->reloadAttributes($printer);
@@ -141,7 +141,7 @@ class PrinterManager extends ManagerAbstract
     {
         $request = $this->preparePurgeRequest($printer);
         $response = $this->client->sendRequest($request);
-        $result = CupsResponse::parseResponse($response);
+        $result = $this->parseResponse($response);
 
         return ($result->getStatusCode() == 'successfull-ok');
     }

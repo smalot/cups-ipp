@@ -15,105 +15,111 @@ class ResponseParser
     /**
      * @var string
      */
-    private $content;
-
-    /**
-     * @var int
-     */
-    private $offset;
-
-    /**
-     * @var string
-     */
-    private $ippVersion;
-
-    /**
-     * @var string
-     */
-    protected $statusCode;
-
-    /**
-     * @var int
-     */
-    protected $requestId;
+    protected $content = '';
 
     /**
      * @var array
      */
-    protected $body;
-
-    /*************************************************
-     * Internal usage vars only                      *
-     *************************************************/
-
-    private $index;
-
-    private $collection; // RFC3382
-
-    private $collectionKey = []; // RFC3382
-
-    private $collectionDepth = -1; // RFC3382
-
-    private $endCollection = false; // RFC3382
-
-    private $collectionNbr = []; // RFC3382
-
-    private $attributeName;
-
-    private $lastAttributeName;
+    protected $body = [];
 
     /**
-     * ResponseParser constructor.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
+     * @var int
      */
-    public function __construct(ResponseInterface $response)
+    protected $index = 0;
+
+    /**
+     * @var int
+     */
+    protected $offset = 0;
+
+    /**
+     * @var mixed
+     */
+    protected $collection; // RFC3382
+
+    /**
+     * @var array
+     */
+    protected $collectionKey = []; // RFC3382
+
+    /**
+     * @var int
+     */
+    protected $collectionDepth = -1; // RFC3382
+
+    /**
+     * @var bool
+     */
+    protected $endCollection = false; // RFC3382
+
+    /**
+     * @var array
+     */
+    protected $collectionNbr = []; // RFC3382
+
+    /**
+     * @var string
+     */
+    protected $attributeName = '';
+
+    /**
+     * @var string
+     */
+    protected $lastAttributeName = '';
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return \Smalot\Cups\Transport\Response
+     */
+    public function parse(ResponseInterface $response)
+    {
+        // Reset properties.
+        $this->reset();
+
+        // Run parsing.
+        $this->content = $response->getBody()->getContents();
+        $ippVersion = $this->parseIppVersion();
+        $statusCode = $this->parseStatusCode();
+        $requestId = $this->parseRequestID();
+        $body = $this->parseBody();
+
+        return $this->generateResponse($ippVersion, $statusCode, $requestId, $body);
+    }
+
+    /**
+     *
+     */
+    protected function reset()
     {
         $this->offset = 0;
-        $this->content = $response->getBody()->getContents();
-
-        $this->ippVersion = $this->parseIppVersion();
-        $this->statusCode = $this->parseStatusCode();
-        $this->requestId = $this->parseRequestID();
-        $this->body = $this->parseBody();
+        $this->index = 0;
+        $this->collection = null;
+        $this->collectionKey = [];
+        $this->collectionDepth = -1;
+        $this->endCollection = false;
+        $this->collectionNbr = [];
+        $this->attributeName = '';
+        $this->lastAttributeName = '';
     }
 
     /**
-     * @return array
+     * @param string $ippVersion
+     * @param string $statusCode
+     * @param int $requestId
+     * @param array $body
+     *
+     * @return \Smalot\Cups\Transport\Response
      */
-    public function getBody()
+    protected function generateResponse($ippVersion, $statusCode, $requestId, $body)
     {
-        return $this->body;
+        return new Response($ippVersion, $statusCode, $requestId, $body);
     }
 
     /**
      * @return string
      */
-    public function getIppVersion()
-    {
-        return $this->ippVersion;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRequestId()
-    {
-        return $this->requestId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    /**
-     * @return string
-     */
-    private function parseIppVersion()
+    protected function parseIppVersion()
     {
         $text = (ord($this->content[$this->offset]) * 256) + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
@@ -139,7 +145,7 @@ class ResponseParser
     /**
      * @return string
      */
-    private function parseStatusCode()
+    protected function parseStatusCode()
     {
         $status_code = (ord($this->content[$this->offset]) * 256) + ord($this->content[$this->offset + 1]);
         $status = 'NOT PARSED';
@@ -304,7 +310,7 @@ class ResponseParser
     /**
      * @return int
      */
-    private function parseRequestID()
+    protected function parseRequestID()
     {
         $requestId = $this->interpretInteger(substr($this->content, $this->offset, 4));
         $this->offset += 4;
@@ -315,7 +321,7 @@ class ResponseParser
     /**
      * @return array
      */
-    private function parseBody()
+    protected function parseBody()
     {
         $j = -1;
         $this->index = 0;
@@ -375,7 +381,7 @@ class ResponseParser
         return $this->body;
     }
 
-    private function readAttribute($attributes_type)
+    protected function readAttribute($attributes_type)
     {
 
         $tag = ord($this->content[$this->offset]);
@@ -451,7 +457,7 @@ class ResponseParser
         return;
     }
 
-    private function readTag($tag)
+    protected function readTag($tag)
     {
         switch ($tag) {
             case 0x10:
@@ -567,7 +573,7 @@ class ResponseParser
         return $tag;
     }
 
-    private function readCollection($attributes_type, $j)
+    protected function readCollection($attributes_type, $j)
     {
         $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
@@ -658,7 +664,7 @@ class ResponseParser
         $this->body[$attributes_type][$j]['value'] = $this->collection;
     }
 
-    private function readAttributeName($attributes_type, $j, $write = 1)
+    protected function readAttributeName($attributes_type, $j, $write = 1)
     {
         $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
@@ -679,7 +685,7 @@ class ResponseParser
         return $name;
     }
 
-    private function readValue($attributes_type, $j, $write = 1)
+    protected function readValue($attributes_type, $j, $write = 1)
     {
         $value_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
@@ -700,7 +706,7 @@ class ResponseParser
         return $value;
     }
 
-    private function interpretAttribute($attributeName, $type, $value)
+    protected function interpretAttribute($attributeName, $type, $value)
     {
         switch ($type) {
             case 'integer':
@@ -743,7 +749,7 @@ class ResponseParser
         return $value;
     }
 
-    private function interpretInteger($value)
+    protected function interpretInteger($value)
     {
         // They are _signed_ integers.
         $value_parsed = 0;
@@ -758,7 +764,7 @@ class ResponseParser
         return $value_parsed;
     }
 
-    private function interpretRangeOfInteger($value)
+    protected function interpretRangeOfInteger($value)
     {
         $halfsize = strlen($value) / 2;
         $integer1 = $this->interpretInteger(substr($value, 0, $halfsize));
@@ -768,7 +774,7 @@ class ResponseParser
         return $value_parsed;
     }
 
-    private function interpretDateTime($date)
+    protected function interpretDateTime($date)
     {
         $year = $this->interpretInteger(substr($date, 0, 2));
         $month = $this->interpretInteger(substr($date, 2, 1));
@@ -798,7 +804,7 @@ class ResponseParser
         return $datetime->format('c');
     }
 
-    private function interpretEnum($attributeName, $value)
+    protected function interpretEnum($attributeName, $value)
     {
         $value_parsed = $this->interpretInteger($value);
 
@@ -1108,7 +1114,7 @@ class ResponseParser
         return $value;
     }
 
-    private function interpretPrinterType($value)
+    protected function interpretPrinterType($value)
     {
         $value_parsed = 0;
 
@@ -1195,7 +1201,7 @@ class ResponseParser
         }
         if ($value_parsed % 524288 == 262144) {
             $type[18] = 'fax-device';
-            $value_parsed -= 262144;
+            // $value_parsed -= 262144;
         }
 
         ksort($type);
