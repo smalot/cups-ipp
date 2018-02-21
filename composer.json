@@ -2,7 +2,7 @@
     "name": "smalot/cups-ipp",
     "description": "CUPS Implementation of IPP - PHP Client API",
     "type": "library",
-    "license": "GPL-v2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Sebastien Malot",
