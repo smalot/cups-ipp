@@ -618,9 +618,7 @@ class JobManager extends ManagerAbstract
           .chr(0x03); // end-of-attributes | end-of-attributes-tag
 
         if ($part['type'] == Job::CONTENT_FILE) {
-            $data = file_get_contents($part['filename']);
-            //            $content .= chr(0x16); // datahead
-            $content .= $data;
+            $content .= $part['binary'];
         } else {
             $content .= chr(0x16); // datahead
             $content .= $part['text'];
