@@ -2,6 +2,9 @@
 
 namespace Smalot\Cups\Model;
 
+use finfo;
+use function GuzzleHttp\Psr7\mimetype_from_filename;
+
 /**
  * Class Job
  *
@@ -262,21 +265,45 @@ class Job implements JobInterface
      *
      * @return Job
      */
-    public function addFile($filename, $name = '', $mimeType = 'application/octet-stream')
+    public function addFile($filename, $name = '', $mimeType = null)
     {
         if (empty($name)) {
             $name = basename($filename);
         }
 
+        if ($mimeType === null) {
+            $mimeType = mimetype_from_filename($filename);
+        }
+
+        return $this->addBinary(fopen($filename, 'r'), $name, $mimeType);
+    }
+
+    /**
+     * @param string $binary
+     * @param string $name
+     * @param string $mimeType
+     *
+     * @return Job
+     */
+    public function addBinary(resource $stream, $name, $mimeType = null)
+    {
+        if ($mimeType === null && class_exists(finfo::class)) {
+            $finfo    = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->buffer($binary);
+        }
+
+        $mimeType = is_string($mimeType) ? $mimeType : 'application/octet-stream';
+
         $this->content[] = [
-          'type' => self::CONTENT_FILE,
-          'name' => $name,
-          'mimeType' => $mimeType,
-          'filename' => $filename,
+            'type' => self::CONTENT_FILE,
+            'name' => $name,
+            'mimeType' => $mimeType,
+            'binary' => stream_get_contents($stream),
         ];
 
         return $this;
     }
+
 
     /**
      * @param string $text
