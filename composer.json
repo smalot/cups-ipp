@@ -11,11 +11,11 @@
     ],
     "require": {
         "php": ">=5.6",
-        "php-http/socket-client": "^1.0",
-        "php-http/client-common": "^1.1",
-        "php-http/message": "^1.0",
-        "guzzlehttp/psr7": "^1.2",
-        "symfony/yaml": "^3.2||^4.0||^5.0"
+        "php-http/socket-client": "*",
+        "php-http/client-common": "*",
+        "php-http/message": "*",
+        "guzzlehttp/psr7": "*",
+        "symfony/yaml": "*"
     },
     "require-dev": {
         "symfony/debug": "*",
