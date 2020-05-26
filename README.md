@@ -24,12 +24,24 @@ composer require smalot/cups-ipp
 Then, require the `vendor/autoload.php` file to enable the autoloading mechanism provided by Composer.
 Otherwise, your application won't be able to find the classes of this component.
 
-
 ## Requirements
 
-This library use unix sock connection: `unix:///var/run/cups/cups.sock`
+### Local connection
+
+This library uses the unix sock connection: `unix:///var/run/cups/cups.sock`
 
 First of all, check if you have correct access to this file: `/var/run/cups/cups.sock`
+
+
+````php
+$client = new Client();
+````
+
+### Remote connection
+
+````php
+$client = new Client("username", "password", ["remote_socket" => "tcp://REMOTE_IP:631"]);
+````
 
 
 ## Implementation
