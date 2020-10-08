@@ -12,6 +12,7 @@ use Http\Client\HttpClient;
 use Http\Client\Socket\Client as SocketHttpClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\CupsException;
 
 /**
@@ -116,7 +117,7 @@ class Client implements HttpClient
     /**
      * (@inheritdoc}
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request) : ResponseInterface
     {
         if ($this->username || $this->password) {
             switch ($this->authType) {
