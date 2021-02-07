@@ -7,7 +7,7 @@ document-name:
 finishings:
     tag: 'enum'
 fit-to-page:
-    tag: 'integer'
+    tag: 'keyword'
 ipp-attribute-fidelity:
     tag: 'boolean'
 job-hold-until:
