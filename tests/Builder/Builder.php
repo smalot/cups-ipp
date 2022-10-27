@@ -2,7 +2,7 @@
 
 namespace Smalot\Cups\Tests\Units\Builder;
 
-use mageekguy\atoum;
+use atoum\atoum;
 use Smalot\Cups\Model\Job;
 use Smalot\Cups\Model\Printer;
 use Smalot\Cups\Transport\Client;

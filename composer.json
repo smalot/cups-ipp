@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "symfony/debug": "^4.4||^5.4",
-        "atoum/atoum": "^3.2"
+        "atoum/atoum": "^4.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

@@ -2,7 +2,7 @@
 
 namespace Smalot\Cups\Tests\Units\Model;
 
-use mageekguy\atoum;
+use atoum\atoum;
 
 /**
  * Class Printer
