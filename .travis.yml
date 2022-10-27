@@ -27,7 +27,7 @@ before_script:
 script:
   # Reset CUPS and PDF Printer
   - sudo apt-get remove -yqq cups cups-pdf
-  - sudo apt-get install -yqq cups cups-pdf
+  - sudo apt-get install -yqq cups cups-pdf cups-client
   - sudo adduser travis lpadmin
   - sudo service cups restart
   # Test PDF Printer
