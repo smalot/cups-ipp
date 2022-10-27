@@ -31,7 +31,6 @@ script:
   - sudo adduser travis lpadmin
   - sudo service cups restart
   # Test PDF Printer
-  - which lp
   - lp -d PDF LICENSE && sleep 10
   # Run Tests
   - ./vendor/bin/atoum -d tests/ -ncc -utr
