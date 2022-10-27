@@ -3,6 +3,7 @@
 namespace Smalot\Cups\Tests\Units\Transport;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\Transport\Client as BaseClient;
 
 /**
@@ -26,7 +27,7 @@ class Client extends BaseClient
     /**
      * @inheritDoc
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $this->lastRequest = $request;
         $this->lastResponse = parent::sendRequest($request);
