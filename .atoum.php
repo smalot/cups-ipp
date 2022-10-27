@@ -2,7 +2,7 @@
 
 include 'vendor/autoload.php';
 
-use mageekguy\atoum;
+use atoum\atoum;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
 
